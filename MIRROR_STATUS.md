@@ -1,29 +1,51 @@
 # Mirror status
 
-## Local full snapshot (box)
+## Version 1 — original WordPress public mirror
 
-- Path: `/workspace/vinko.com-mirror`
-- Local git commit: `5ca140d` on branch `main` (1230 files, ~89MB)
-- Includes `www.vinko.com/`, `hosting.vinko.com/`, and apex `vinko.com/` captures
-- Archive: `/tmp/vinko.com-mirror.tar.gz` (54MB, sha256 `95ecab2cfea3932991a5e2c7143a02b68bbbb8f8be9a51551571aedb27468e96`)
+Layout (this is the Version 1 WordPress public archive):
 
-## Remote (`github.com/vinko/vinko.com`)
+- `wordpress/www.vinko.com/`
+- `wordpress/hosting.vinko.com/`
+- `wordpress/vinko.com/`
 
-Partial upload via GitHub MCP (`push_files` / `create_or_update_file`) because `gh` has no local credentials (`gh auth status` logged out; `git push` cannot prompt).
+Spelling: **Vinko** / **vinko.com** only.
 
-To finish a full push from the box after `gh auth login`:
+## Crawl (public)
 
-```bash
-cd /workspace/vinko.com-mirror
-gh auth login
-git push -u origin main --force
-```
-
-(`--force` only if remote partial commits should be replaced by the complete local mirror commit.)
-
-## Crawl notes
-
+- Date: 2026-09-04
 - Canonical host: `https://www.vinko.com` (apex redirects)
 - `robots.txt` honored; `/wp-admin/` skipped
-- Some historical `blog.vinko.com` assets failed TLS hostname check
-- Some legacy `/images/*` paths returned 404
+- Stay-on-host downloads only (`www.vinko.com`, `hosting.vinko.com`, `vinko.com`)
+- HTML: public sitemap URLs (posts, pages, categories, tags, post formats, author) plus home, feed, robots.txt, and a few `/page/N/` indexes
+- Uploads: WordPress REST `wp/v2/media` source files and generated sizes from `https://www.vinko.com/wp-content/uploads/` (directory listing is 403; files were fetched by URL)
+- Theme/public CSS, JS, Libre Franklin font files, and `wp-includes` scripts referenced from the homepage
+- `hosting.vinko.com` recursive public wget (`robots.txt` on)
+
+Full PHP from hosting / WordPress core is **optional later** and is not part of this public HTML+uploads snapshot.
+
+## Totals (this tree)
+
+Approximate counts after the 2026-09-04 public crawl:
+
+- Whole `wordpress/` tree: ~8.8k files, ~533MB
+- `wordpress/www.vinko.com/wp-content/uploads/`: **6153 files, ~253MB** (photos and sized derivatives)
+- Original media `source_url` files present: **1322 / 1365** listed by the media API
+- Public HTML from the sitemap: all requested URLs saved (retries after transient DNS errors)
+
+## Gaps
+
+- **43 original media URLs** (and some of their sized variants) returned HTTP 404. Many are 2020-04 theme-demo / stock filenames (`demo-screenshot.jpg`, `logo1.png`, Unsplash-style landscape names, customer portraits) that remain in the media library but are not on disk.
+- Some historical `blog.vinko.com` assets failed TLS hostname check in earlier crawls and were not re-fetched here.
+- Archived HTML still contains live-site URLs for anything not saved locally.
+- Query-string hosting order pages (`order?currency=…`) were captured by wget following public links.
+
+## Deploy policy
+
+**Do not deploy this mirror (or any rebuild) to ICDSoft / live vinko.com or hosting.vinko.com without explicit confirmation.**
+
+No hosting credentials or secrets belong in this repo.
+
+## Git
+
+- Branch: `main` is Version 1 WordPress
+- Tag: `v1.0.0-wordpress` (annotated) on the Version 1 archive commit

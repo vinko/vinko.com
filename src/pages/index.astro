@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+const posts = (await getCollection("posts"))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 6);
+---
+<BaseLayout title="Home" description="Vinko Thoughts On... — recent posts from vinko.com">
+  <section class="prose">
+    <h1>Vinko&rsquo;s Thoughts On...</h1>
+    <p class="lead">The thoughts of a true technology versatilist. Personal notes on tech, travel, food, and photography from Vinko.</p>
+  </section>
+  <section>
+    <h2>Recent posts</h2>
+    <ul class="post-list">
+      {posts.map((post) => (
+        <li class="post-card">
+          <a href={`/blog/${post.id}/`}>
+            <div class="post-meta"><time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</time></div>
+            <h3>{post.data.title}</h3>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p style="margin-top:1.5rem"><a href="/blog/">All posts →</a></p>
+  </section>
+</BaseLayout>

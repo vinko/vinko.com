@@ -1,0 +1,53 @@
+---
+import "../styles/global.css";
+interface Props { title?: string; description?: string; }
+const { title, description = "Personal blog of Vinko at vinko.com" } = Astro.props;
+const pageTitle = title ? `${title} · vinko.com` : "Vinko's Thoughts On... · vinko.com";
+const path = Astro.url.pathname;
+const nav = [
+  { href: "/", label: "Home" },
+  { href: "/blog/", label: "Blog" },
+  { href: "/about/", label: "About" },
+  { href: "/services/", label: "Services" },
+  { href: "/contact/", label: "Contact" },
+];
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content={description} />
+  <title>{pageTitle}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="site-brand" href="/">
+        <strong>Vinko&rsquo;s Thoughts On...</strong>
+        <span>vinko.com</span>
+      </a>
+      <nav aria-label="Primary">
+        <ul class="site-nav">
+          {nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={path === item.href || (item.href !== "/" && path.startsWith(item.href)) ? "page" : undefined}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="site-main">
+    <slot />
+  </main>
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <p>&copy; {new Date().getFullYear()} Vinko · <a href="https://www.vinko.com">vinko.com</a></p>
+    </div>
+  </footer>
+</body>
+</html>

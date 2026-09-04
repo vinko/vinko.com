@@ -1,40 +1,41 @@
-# vinko.com public mirror
+# vinko.com — Astro static rebuild
 
-Private tracking repo for [vinko.com](https://vinko.com) / [www.vinko.com](https://www.vinko.com).
+Static Astro rebuild of **[vinko.com](https://www.vinko.com)** (“Vinko’s Thoughts On…”).
 
-This repository contains a **static public mirror** of the live site, captured for archival and reference.
+This project is the **source of truth** for a future static site. Content was migrated from a public HTML mirror of www.vinko.com for scaffolding purposes (representative posts + About/Services/Contact).
 
-## What is included
+Spelling: **Vinko** / **vinko.com** only.
 
-- Public HTML pages from **www.vinko.com** (WordPress blog "Vinko's Thoughts On...")
-- Linked public pages from **hosting.vinko.com** and apex **vinko.com** where crawled
-- Public assets reachable from those pages (CSS, JS, images, fonts), where available
+## Requirements
 
-## What is not included
+- Node.js 22.12+ (Astro 5)
 
-- Server-side / private application source code
-- WordPress core & theme PHP, database contents, secrets, or credentials
-- `/wp-admin/` (disallowed by `robots.txt`) and login endpoints
-- Content that returned 404 or was otherwise unreachable at crawl time
-- Some historical assets on obsolete hostnames (e.g. `blog.vinko.com` TLS mismatch)
+## Commands
 
-## Layout
-
-```
-www.vinko.com/       # primary site mirror
-hosting.vinko.com/   # related public hosting site pages/assets
-vinko.com/           # apex host capture (redirects to www)
-README.md
+```bash
+npm install
+npm run dev       # local dev server
+npm run build     # static output to dist/
+npm run preview   # preview the production build
 ```
 
-## Notes
+## Important — no live deploy without confirmation
 
-- This is a **snapshot** of publicly served files, not a deployable WordPress app.
-- Links may still point at the live site for missing assets.
-- Captured with respectful crawling (`robots.txt` honored; wp-admin skipped).
-- Never deploy or delete hosting files without explicit confirmation.
-- Spelling: **Vinko** / **vinko.com**.
+**Do not deploy this site to ICDSoft / the live vinko.com (or hosting.vinko.com) without explicit confirmation.**
 
-## Mirror date
+This scaffold is for local development and repository work only. No hosting credentials or secrets belong in this repo.
 
-2026-09-04 (Asia/Macau)
+## Structure
+
+- `src/pages/` — Home, About, Services, Contact, Blog index + post pages
+- `src/content/posts/` — Markdown blog posts (content collection)
+- `src/layouts/` — shared layout (Libre Franklin via Google Fonts)
+- `astro.config.mjs` — `output: 'static'`
+
+## Existing mirror directories
+
+The repository still contains `www.vinko.com/`, `hosting.vinko.com/`, and `vinko.com/` mirror directories (plus related mirror status docs). **Those remain in place as reference snapshots** of prior site content. New Astro project files live at the repository root and are the intended rebuild source of truth going forward.
+
+## Repo
+
+Intended for https://github.com/vinko/vinko.com (copy or replace as appropriate). This folder was generated at `/workspace/vinko-astro` and is ready to be copied into that repository when you choose.

@@ -18,6 +18,7 @@
   --wide: 68rem;
   --radius: 18px;
   --touch: 44px;
+  --header-offset: 4.5rem;
   --step-0: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
   --step-1: clamp(1.125rem, 1rem + 0.5vw, 1.35rem);
   --step-2: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
@@ -90,10 +91,12 @@ a:hover {
   top: 0.75rem;
 }
 
-/* Sticky translucent nav */
+/* Fixed translucent nav (fixed, not sticky: a flex body breaks sticky) */
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
   background: var(--nav-bg);
   backdrop-filter: saturate(180%) blur(20px);
@@ -162,6 +165,7 @@ a:hover {
 
 .site-main {
   flex: 1 0 auto;
+  padding-top: var(--header-offset);
 }
 
 /* Shared page shell */
@@ -234,6 +238,7 @@ a:hover {
   align-items: flex-end;
   overflow: hidden;
   background: #d8dde3;
+  margin-top: calc(-1 * var(--header-offset));
 }
 
 .hero-photo {
@@ -507,6 +512,12 @@ a:hover {
 
 .site-footer a:hover {
   color: var(--accent);
+}
+
+@media (max-width: 720px) {
+  :root {
+    --header-offset: 6.75rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

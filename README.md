@@ -63,7 +63,7 @@ A click-through preview of Light Continuum is published from `main` to GitHub Pa
 
 This does **not** deploy to www.vinko.com, hosting.vinko.com, or ICDSoft `public_html`.
 
-If the preview 404s: the repo is private. GitHub Pages for a private repository needs GitHub Pro (or a public repo), and Settings → Pages → Source should be **GitHub Actions**.
+If the preview 404s or the workflow cannot enable Pages: the repo is private. GitHub Pages for a private repository needs GitHub Pro (or a public repo). In Settings → Pages, set Source to **GitHub Actions** (the workflow tries to do this automatically).
 
 ### Important — no live deploy without confirmation
 

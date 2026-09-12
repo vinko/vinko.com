@@ -2,6 +2,7 @@
 import BlogArchive from "../../components/BlogArchive.astro";
 import { getCollection } from "astro:content";
 import { PAGE_SIZE, postYears, publishedPosts } from "../../lib/posts";
+import { withBase } from "../../lib/url";
 
 const all = publishedPosts(await getCollection("posts"));
 const years = postYears(all);
@@ -17,5 +18,5 @@ const posts = all.slice(0, PAGE_SIZE);
   currentYear="all"
   page={1}
   lastPage={lastPage}
-  pagerBase="/blog/"
+  pagerBase={withBase("/blog/")}
 />

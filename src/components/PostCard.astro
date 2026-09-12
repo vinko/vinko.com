@@ -1,6 +1,7 @@
 ---
 import { firstImage, formatDate } from "../lib/posts";
 import type { Post } from "../lib/posts";
+import { withBase } from "../lib/url";
 
 interface Props {
   post: Post;
@@ -12,7 +13,7 @@ const image = firstImage(post.body);
 const Heading = heading;
 ---
 <li class="post-card">
-  <a href={`/blog/${post.id}/`}>
+  <a href={withBase(`/blog/${post.id}/`)}>
     {image ? (
       <div class="card-media">
         <img src={image.src} alt="" width="640" height="400" />

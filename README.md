@@ -40,7 +40,7 @@ Static rebuild at the **repository root**. The Version 1 WordPress tree is kept 
 
 Migrated posts live in `src/content/posts/` (Astro content collection). Photos used by those posts are served from `public/wp-content/uploads/` (copied from the Version 1 archive). Markdown image URLs are local (`/wp-content/uploads/...`), not hotlinks to www.vinko.com.
 
-Design: Libre Franklin (self-hosted from the Twenty Seventeen theme fonts).
+Design: **Light Continuum** — an Apple-inspired light editorial (system-ui / SF Pro / Segoe UI / Helvetica stack; field `#f5f5f7`, text `#1d1d1f`, accent `#0071e3`). Not a pixel clone of apple.com. Libre Franklin is no longer used.
 
 ### Commands
 

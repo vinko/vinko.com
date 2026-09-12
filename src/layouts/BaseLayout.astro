@@ -27,6 +27,7 @@ const nav = [
     <title>{pageTitle}</title>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="site-header-inner">
         <a class="site-brand" href="/">
@@ -53,15 +54,13 @@ const nav = [
         </nav>
       </div>
     </header>
-    <main class="site-main">
+    <main id="main" class="site-main">
       <slot />
     </main>
     <footer class="site-footer">
       <div class="site-footer-inner">
-        <p>
-          &copy; {new Date().getFullYear()} Vinko ·
-          <a href="https://www.vinko.com">vinko.com</a>
-        </p>
+        <p>&copy; {new Date().getFullYear()} Vinko</p>
+        <p><a href="https://www.vinko.com">vinko.com</a></p>
       </div>
     </footer>
   </body>

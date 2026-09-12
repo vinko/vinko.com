@@ -76,6 +76,7 @@ This branch is for local development, review, repository work, and the GitHub Pa
 ## Tree
 
 ```
+.github/workflows/   # GitHub Pages preview (not live vinko.com)
 wordpress/           # Version 1 WordPress public mirror (do not delete)
 src/                 # Version 2 Astro source
 public/              # Version 2 static assets, including wp-content/uploads photos

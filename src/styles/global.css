@@ -11,14 +11,13 @@
   --hairline: rgba(0, 0, 0, 0.08);
   --shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
   --shadow-hover: 0 16px 40px rgba(0, 0, 0, 0.1);
-  --nav-bg: rgba(245, 245, 247, 0.72);
+  --nav-bg: rgba(245, 245, 247, 0.86);
   --font: system-ui, -apple-system, "SF Pro Display", "SF Pro Text", "Segoe UI",
     "Helvetica Neue", Helvetica, Arial, sans-serif;
   --measure: 40rem;
   --wide: 68rem;
   --radius: 18px;
   --touch: 44px;
-  --header-offset: 4.5rem;
   --step-0: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
   --step-1: clamp(1.125rem, 1rem + 0.5vw, 1.35rem);
   --step-2: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
@@ -39,8 +38,6 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
   font-family: var(--font);
   font-size: var(--step-0);
   line-height: 1.6;
@@ -91,12 +88,10 @@ a:hover {
   top: 0.75rem;
 }
 
-/* Fixed translucent nav (fixed, not sticky: a flex body breaks sticky) */
+/* Sticky translucent nav — body is not a flex container so sticky can pin */
 .site-header {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   z-index: 100;
   background: var(--nav-bg);
   backdrop-filter: saturate(180%) blur(20px);
@@ -164,8 +159,7 @@ a:hover {
 }
 
 .site-main {
-  flex: 1 0 auto;
-  padding-top: var(--header-offset);
+  min-height: 60vh;
 }
 
 /* Shared page shell */
@@ -238,7 +232,6 @@ a:hover {
   align-items: flex-end;
   overflow: hidden;
   background: #d8dde3;
-  margin-top: calc(-1 * var(--header-offset));
 }
 
 .hero-photo {
@@ -512,12 +505,6 @@ a:hover {
 
 .site-footer a:hover {
   color: var(--accent);
-}
-
-@media (max-width: 720px) {
-  :root {
-    --header-offset: 6.75rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

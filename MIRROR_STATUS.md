@@ -49,3 +49,4 @@ No hosting credentials or secrets belong in this repo.
 
 - Branch: `main` is Version 1 WordPress
 - Tag: `v1.0.0-wordpress` (annotated) on the Version 1 archive commit
+- Branch `v2-astro` adds the Astro static rebuild at repo root and copies uploads into `public/wp-content/uploads/`. There is **no** `v2.0.0` tag. **No live deploy without confirmation.**

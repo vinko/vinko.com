@@ -1,0 +1,16 @@
+---
+interface Props {
+  years: number[];
+  current?: number | "all";
+}
+
+const { years, current = "all" } = Astro.props;
+---
+<nav class="year-nav" aria-label="Filter posts by year">
+  <a href="/blog/" aria-current={current === "all" ? "page" : undefined}>All</a>
+  {years.map((year) => (
+    <a href={`/blog/year/${year}/`} aria-current={current === year ? "page" : undefined}>
+      {year}
+    </a>
+  ))}
+</nav>

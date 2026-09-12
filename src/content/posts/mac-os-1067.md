@@ -1,0 +1,10 @@
+---
+title: "Mac OS 10.6.7 is Now Available"
+description: "Apple made available the maintenance release of Mac OS X version 10.6.7 via their web site and Software Updates."
+pubDate: 2011-03-22
+---
+
+[![Apple Blue Logo](http://vinko.files.wordpress.com/2009/08/apple_blue_logo.png)](http://support.apple.com/kb/DL1361 "OS 10.6.7 Combo Updater")Apple made available the maintenance release of Mac OS X version 10.6.7 via their web site and Software Updates.
+
+You can either use the Software Updates menu item (under the Apple menu) to upgrade your Mac or you can download the [Combo Updater](http://support.apple.com/kb/DL1361 "OS 10.6.7 Combo Updater") from Apple’s Support area.  
+[![Mac OS 10.6.7 Update Available](/wp-content/uploads/2011/03/screen-shot-2011-03-23-at-12-13-28.png)](http://support.apple.com/kb/DL1361 "OS 10.6.7 Combo Updater")

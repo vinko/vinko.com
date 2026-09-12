@@ -1,0 +1,30 @@
+---
+import BlogArchive from "../../../components/BlogArchive.astro";
+import { getCollection } from "astro:content";
+import { PAGE_SIZE, postYears, publishedPosts } from "../../../lib/posts";
+
+export async function getStaticPaths() {
+  const all = publishedPosts(await getCollection("posts"));
+  const lastPage = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+  return Array.from({ length: Math.max(0, lastPage - 1) }, (_, i) => ({
+    params: { page: String(i + 2) },
+  }));
+}
+
+const all = publishedPosts(await getCollection("posts"));
+const years = postYears(all);
+const lastPage = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+const page = Number(Astro.params.page);
+const posts = all.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+---
+<BlogArchive
+  title={`Blog · page ${page}`}
+  description="Blog archive — Vinko’s Thoughts On… at vinko.com"
+  lead={`Posts migrated from the public vinko.com WordPress archive. ${all.length.toLocaleString("en-US")} entries, newest first.`}
+  posts={posts}
+  years={years}
+  currentYear="all"
+  page={page}
+  lastPage={lastPage}
+  pagerBase="/blog/"
+/>

@@ -1,0 +1,29 @@
+---
+import BlogArchive from "../../../../components/BlogArchive.astro";
+import { getCollection } from "astro:content";
+import { PAGE_SIZE, postYears, publishedPosts } from "../../../../lib/posts";
+
+export async function getStaticPaths() {
+  const all = publishedPosts(await getCollection("posts"));
+  const years = postYears(all);
+  return years.map((year) => ({ params: { year: String(year) } }));
+}
+
+const year = Number(Astro.params.year);
+const all = publishedPosts(await getCollection("posts"));
+const years = postYears(all);
+const yearPosts = all.filter((p) => p.data.pubDate.getUTCFullYear() === year);
+const lastPage = Math.max(1, Math.ceil(yearPosts.length / PAGE_SIZE));
+const posts = yearPosts.slice(0, PAGE_SIZE);
+---
+<BlogArchive
+  title={`Blog · ${year}`}
+  description={`Posts from ${year} — Vinko’s Thoughts On… at vinko.com`}
+  lead={`${yearPosts.length.toLocaleString("en-US")} posts from ${year}, newest first.`}
+  posts={posts}
+  years={years}
+  currentYear={year}
+  page={1}
+  lastPage={lastPage}
+  pagerBase={`/blog/year/${year}/`}
+/>

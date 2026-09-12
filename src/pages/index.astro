@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "../components/PostCard.astro";
+import { getCollection } from "astro:content";
+import { publishedPosts } from "../lib/posts";
+
+const posts = publishedPosts(await getCollection("posts")).slice(0, 6);
+const heroSrc = "/wp-content/uploads/2019/02/d43b5-50177672_2052021638244499_6986579110545121136_n.jpg";
+---
+<BaseLayout title="Home" description="Vinko’s Thoughts On… — notes on tech, travel, food, and photography from vinko.com">
+  <section class="hero" aria-label="Introduction">
+    <img
+      class="hero-photo"
+      src={heroSrc}
+      alt="Victoria Harbour, Hong Kong, photographed in 2019"
+      width="640"
+      height="546"
+    />
+    <div class="hero-veil" aria-hidden="true"></div>
+    <div class="hero-copy">
+      <h1>Vinko’s Thoughts On…</h1>
+      <p class="lead">
+        Notes on tech, travel, food, and photography — from a true technology versatilist.
+      </p>
+      <div class="btn-row">
+        <a class="btn" href="/blog/">Read the blog</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-shell">
+    <h2 class="section-heading">Recent posts</h2>
+    <ul class="post-grid">
+      {posts.map((post) => <PostCard post={post} heading="h3" />)}
+    </ul>
+  </section>
+</BaseLayout>

@@ -1,9 +1,7 @@
 ---
 import BlogArchive from "../../../components/BlogArchive.astro";
 import { getCollection } from "astro:content";
-import { postYears, publishedPosts } from "../../../lib/posts";
-
-const PAGE_SIZE = 18;
+import { PAGE_SIZE, postYears, publishedPosts } from "../../../lib/posts";
 
 export async function getStaticPaths() {
   const all = publishedPosts(await getCollection("posts"));

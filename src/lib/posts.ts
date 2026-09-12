@@ -2,6 +2,9 @@ import type { CollectionEntry } from "astro:content";
 
 export type Post = CollectionEntry<"posts">;
 
+/** Image-card grid: 6 rows × 3 columns on desktop. */
+export const PAGE_SIZE = 18;
+
 export function publishedPosts(posts: Post[]): Post[] {
   return posts
     .filter((p) => !p.data.draft)

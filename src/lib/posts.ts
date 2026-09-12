@@ -1,4 +1,5 @@
 import type { CollectionEntry } from "astro:content";
+import { withBase } from "./url";
 
 export type Post = CollectionEntry<"posts">;
 
@@ -14,7 +15,7 @@ export function publishedPosts(posts: Post[]): Post[] {
 export function firstImage(body: string | undefined): { src: string; alt: string } | undefined {
   if (!body) return undefined;
   const md = body.match(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/);
-  if (md) return { alt: md[1], src: md[2] };
+  if (md) return { alt: md[1], src: withBase(md[2]) };
   return undefined;
 }
 

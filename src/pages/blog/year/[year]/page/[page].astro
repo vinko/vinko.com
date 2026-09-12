@@ -2,6 +2,7 @@
 import BlogArchive from "../../../../../components/BlogArchive.astro";
 import { getCollection } from "astro:content";
 import { PAGE_SIZE, postYears, publishedPosts } from "../../../../../lib/posts";
+import { withBase } from "../../../../../lib/url";
 
 export async function getStaticPaths() {
   const all = publishedPosts(await getCollection("posts"));
@@ -34,5 +35,5 @@ const posts = yearPosts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   currentYear={year}
   page={page}
   lastPage={lastPage}
-  pagerBase={`/blog/year/${year}/`}
+  pagerBase={withBase(`/blog/year/${year}/`)}
 />

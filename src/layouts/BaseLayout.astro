@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { withBase } from "../lib/url";
 
 interface Props {
   title?: string;
@@ -9,12 +10,13 @@ interface Props {
 const { title, description = "Personal blog of Vinko at vinko.com" } = Astro.props;
 const pageTitle = title ? `${title} · vinko.com` : "Vinko’s Thoughts On… · vinko.com";
 const path = Astro.url.pathname;
+const homeHref = withBase("/");
 const nav = [
-  { href: "/", label: "Home" },
-  { href: "/blog/", label: "Blog" },
-  { href: "/about/", label: "About" },
-  { href: "/services/", label: "Services" },
-  { href: "/contact/", label: "Contact" },
+  { href: homeHref, label: "Home" },
+  { href: withBase("/blog/"), label: "Blog" },
+  { href: withBase("/about/"), label: "About" },
+  { href: withBase("/services/"), label: "Services" },
+  { href: withBase("/contact/"), label: "Contact" },
 ];
 ---
 <!DOCTYPE html>
@@ -23,14 +25,14 @@ const nav = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="icon" href={withBase("/favicon.png")} type="image/png" />
     <title>{pageTitle}</title>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="site-header-inner">
-        <a class="site-brand" href="/">
+        <a class="site-brand" href={homeHref}>
           <strong>Vinko’s Thoughts On…</strong>
           <span>vinko.com</span>
         </a>
@@ -41,7 +43,7 @@ const nav = [
                 <a
                   href={item.href}
                   aria-current={
-                    path === item.href || (item.href !== "/" && path.startsWith(item.href))
+                    path === item.href || (item.href !== homeHref && path.startsWith(item.href))
                       ? "page"
                       : undefined
                   }

@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "./PostCard.astro";
+import YearNav from "./YearNav.astro";
+import Pager from "./Pager.astro";
+import type { Post } from "../lib/posts";
+
+interface Props {
+  title: string;
+  description: string;
+  lead: string;
+  posts: Post[];
+  years: number[];
+  currentYear?: number | "all";
+  page: number;
+  lastPage: number;
+  pagerBase: string;
+}
+
+const {
+  title,
+  description,
+  lead,
+  posts,
+  years,
+  currentYear = "all",
+  page,
+  lastPage,
+  pagerBase,
+} = Astro.props;
+---
+<BaseLayout title={title} description={description}>
+  <section class="page-shell">
+    <header class="page-header">
+      <h1>Blog</h1>
+      <p class="lead">{lead}</p>
+    </header>
+    <YearNav years={years} current={currentYear} />
+    <ul class="post-grid">
+      {posts.map((post) => <PostCard post={post} />)}
+    </ul>
+    <Pager base={pagerBase} current={page} last={lastPage} />
+  </section>
+</BaseLayout>

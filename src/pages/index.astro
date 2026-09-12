@@ -1,18 +1,10 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "../components/PostCard.astro";
 import { getCollection } from "astro:content";
+import { publishedPosts } from "../lib/posts";
 
-const posts = (await getCollection("posts"))
-  .filter((p) => !p.data.draft)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 6);
-
-function firstImage(body: string): { src: string; alt: string } | undefined {
-  const md = body.match(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/);
-  if (md) return { alt: md[1], src: md[2] };
-  return undefined;
-}
-
+const posts = publishedPosts(await getCollection("posts")).slice(0, 6);
 const heroSrc = "/wp-content/uploads/2019/02/d43b5-50177672_2052021638244499_6986579110545121136_n.jpg";
 ---
 <BaseLayout title="Home" description="Vinko’s Thoughts On… — notes on tech, travel, food, and photography from vinko.com">
@@ -39,35 +31,7 @@ const heroSrc = "/wp-content/uploads/2019/02/d43b5-50177672_2052021638244499_698
   <section class="page-shell">
     <h2 class="section-heading">Recent posts</h2>
     <ul class="post-grid">
-      {posts.map((post) => {
-        const image = firstImage(post.body);
-        return (
-          <li class="post-card">
-            <a href={`/blog/${post.id}/`}>
-              {image ? (
-                <div class="card-media">
-                  <img src={image.src} alt="" width="640" height="400" />
-                </div>
-              ) : (
-                <div class="card-media card-media--empty" aria-hidden="true"></div>
-              )}
-              <div class="card-body">
-                <div class="post-meta">
-                  <time datetime={post.data.pubDate.toISOString()}>
-                    {post.data.pubDate.toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </time>
-                </div>
-                <h3>{post.data.title}</h3>
-                {post.data.description && <p>{post.data.description}</p>}
-              </div>
-            </a>
-          </li>
-        );
-      })}
+      {posts.map((post) => <PostCard post={post} heading="h3" />)}
     </ul>
   </section>
 </BaseLayout>

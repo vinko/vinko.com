@@ -1,0 +1,49 @@
+---
+interface Props {
+  base: string;
+  current: number;
+  last: number;
+}
+
+const { base, current, last } = Astro.props;
+
+function href(page: number): string {
+  if (page <= 1) return base;
+  return `${base}page/${page}/`;
+}
+
+const windowSize = 2;
+const start = Math.max(1, current - windowSize);
+const end = Math.min(last, current + windowSize);
+const pages: number[] = [];
+for (let i = start; i <= end; i++) pages.push(i);
+---
+{last > 1 && (
+  <nav class="pager" aria-label="Blog pages">
+    {current > 1 ? (
+      <a class="pager-dir" href={href(current - 1)}>Previous</a>
+    ) : (
+      <span class="pager-dir pager-dir--disabled" aria-disabled="true">Previous</span>
+    )}
+    {start > 1 && (
+      <>
+        <a href={href(1)} aria-current={current === 1 ? "page" : undefined}>1</a>
+        {start > 2 && <span class="pager-ellipsis" aria-hidden="true">…</span>}
+      </>
+    )}
+    {pages.map((n) => (
+      <a href={href(n)} aria-current={n === current ? "page" : undefined}>{n}</a>
+    ))}
+    {end < last && (
+      <>
+        {end < last - 1 && <span class="pager-ellipsis" aria-hidden="true">…</span>}
+        <a href={href(last)} aria-current={current === last ? "page" : undefined}>{last}</a>
+      </>
+    )}
+    {current < last ? (
+      <a class="pager-dir" href={href(current + 1)}>Next</a>
+    ) : (
+      <span class="pager-dir pager-dir--disabled" aria-disabled="true">Next</span>
+    )}
+  </nav>
+)}

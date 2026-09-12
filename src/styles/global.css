@@ -414,8 +414,29 @@ a:hover {
 .prose p,
 .prose ul,
 .prose ol,
-.prose blockquote {
+.prose blockquote,
+.prose table {
   margin: 0 0 1.05rem;
+}
+
+.prose blockquote {
+  margin-left: 0;
+  padding: 0.15rem 0 0.15rem 1rem;
+  border-left: 3px solid var(--hairline);
+  color: var(--muted);
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.prose th,
+.prose td {
+  padding: 0.4rem 0.55rem;
+  border-bottom: 1px solid var(--hairline);
+  text-align: left;
 }
 
 .prose ul,
@@ -455,6 +476,82 @@ a:hover {
   font-size: var(--step-2);
   font-weight: 600;
   letter-spacing: -0.03em;
+}
+
+/* Year chips + pager — same Light Continuum pills as nav/buttons */
+.year-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 1.75rem;
+}
+
+.year-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
+  padding: 0 0.85rem;
+  border-radius: 980px;
+  background: var(--elevated);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  box-shadow: var(--shadow);
+}
+
+.year-nav a:hover,
+.year-nav a[aria-current="page"] {
+  background: var(--text);
+  color: #fff;
+}
+
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 2.25rem 0 0;
+}
+
+.pager a,
+.pager span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch);
+  min-width: var(--touch);
+  padding: 0 0.85rem;
+  border-radius: 980px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.pager a {
+  background: var(--elevated);
+  color: var(--text);
+  text-decoration: none;
+  box-shadow: var(--shadow);
+}
+
+.pager a:hover,
+.pager a[aria-current="page"] {
+  background: var(--text);
+  color: #fff;
+}
+
+.pager-dir {
+  min-width: auto;
+}
+
+.pager-dir--disabled,
+.pager-ellipsis {
+  color: var(--muted);
+  box-shadow: none;
 }
 
 /* Contact / notes */

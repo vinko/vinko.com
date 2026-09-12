@@ -1,53 +1,22 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogArchive from "../../components/BlogArchive.astro";
 import { getCollection } from "astro:content";
+import { postYears, publishedPosts } from "../../lib/posts";
 
-const posts = (await getCollection("posts"))
-  .filter((p) => !p.data.draft)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-function firstImage(body: string): { src: string; alt: string } | undefined {
-  const md = body.match(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/);
-  if (md) return { alt: md[1], src: md[2] };
-  return undefined;
-}
+const PAGE_SIZE = 18;
+const all = publishedPosts(await getCollection("posts"));
+const years = postYears(all);
+const lastPage = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+const posts = all.slice(0, PAGE_SIZE);
 ---
-<BaseLayout title="Blog" description="Blog archive — Vinko’s Thoughts On… at vinko.com">
-  <section class="page-shell">
-    <header class="page-header">
-      <h1>Blog</h1>
-      <p class="lead">Posts migrated from the public vinko.com WordPress archive.</p>
-    </header>
-    <ul class="post-grid">
-      {posts.map((post) => {
-        const image = firstImage(post.body);
-        return (
-          <li class="post-card">
-            <a href={`/blog/${post.id}/`}>
-              {image ? (
-                <div class="card-media">
-                  <img src={image.src} alt="" width="640" height="400" />
-                </div>
-              ) : (
-                <div class="card-media card-media--empty" aria-hidden="true"></div>
-              )}
-              <div class="card-body">
-                <div class="post-meta">
-                  <time datetime={post.data.pubDate.toISOString()}>
-                    {post.data.pubDate.toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </time>
-                </div>
-                <h2>{post.data.title}</h2>
-                {post.data.description && <p>{post.data.description}</p>}
-              </div>
-            </a>
-          </li>
-        );
-      })}
-    </ul>
-  </section>
-</BaseLayout>
+<BlogArchive
+  title="Blog"
+  description="Blog archive — Vinko’s Thoughts On… at vinko.com"
+  lead={`Posts migrated from the public vinko.com WordPress archive. ${all.length.toLocaleString("en-US")} entries, newest first.`}
+  posts={posts}
+  years={years}
+  currentYear="all"
+  page={1}
+  lastPage={lastPage}
+  pagerBase="/blog/"
+/>

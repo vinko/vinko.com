@@ -1,0 +1,21 @@
+---
+title: "Joke: Life Lesson 7"
+description: "A middle aged woman had a heart attack and was taken to the hospital. While on the operating table she had a near death experience. Seeing God She asked “Is my time up?” God…"
+pubDate: 2008-08-25
+---
+
+### Story
+
+A middle aged woman had a heart attack and was taken to the hospital. While on the operating table she had a near death experience. Seeing God She asked “Is my time up?” God said, “No, you have another 43 years, 2 months and 8 days to live.”
+
+Upon recovery, the woman decided to stay in the hospital and have a facelift, liposuction, and a tummy tuck. She even had someone come in and change her hair color. Since she had so much more time to live, she figured she might as well make the most of it.
+
+After her last operation, she was released from the hospital. While crossing the street on her way home, she was killed by an ambulance.
+
+Arriving in front of God, she demanded, “I thought you said I had another 40 years? Why didn’t you pull me from out of the path of the ambulance?”
+
+God replied, “I didn’t recognize you!”
+
+### Lesson
+
+Don’t lose your natural inner character. Always be who you are.

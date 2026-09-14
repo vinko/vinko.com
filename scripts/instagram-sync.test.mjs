@@ -5,12 +5,15 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  MAX_PAGES_DEFAULT,
+  MEDIA_PAGE_LIMIT,
   buildFrontmatter,
   buildPostBody,
   collectDownloadableMedia,
   collectExistingInstagramIds,
   descriptionFromCaption,
   extensionFromContentType,
+  fetchMediaPages,
   formatReport,
   graphUrl,
   missingTokenMessage,
@@ -333,6 +336,50 @@ describe("cli helpers", () => {
     assert.equal(args.dryRun, true);
     assert.equal(args.maxPages, 2);
     assert.equal(args.postsDir, "/tmp/posts");
+  });
+
+  it("defaults maxPages to the ~10k Graph safety ceiling", () => {
+    assert.equal(MEDIA_PAGE_LIMIT, 25);
+    assert.equal(MAX_PAGES_DEFAULT, 400);
+    assert.equal(MEDIA_PAGE_LIMIT * MAX_PAGES_DEFAULT, 10_000);
+    const args = parseArgs([]);
+    assert.equal(args.maxPages, 400);
+  });
+
+  it("fetchMediaPages stops when paging.next is gone before maxPages", async () => {
+    const calls = [];
+    const items = await fetchMediaPages("token", {
+      host: "graph.instagram.com",
+      version: "v21.0",
+      userId: "user",
+      maxPages: 400,
+      get: async (url) => {
+        calls.push(url.toString());
+        return { data: [{ id: "only-page" }] };
+      },
+    });
+    assert.equal(items.length, 1);
+    assert.equal(calls.length, 1);
+    assert.match(calls[0], /limit=25/);
+  });
+
+  it("fetchMediaPages respects the maxPages safety ceiling", async () => {
+    let page = 0;
+    const items = await fetchMediaPages("token", {
+      host: "graph.instagram.com",
+      version: "v21.0",
+      userId: "user",
+      maxPages: 2,
+      get: async () => {
+        page += 1;
+        return {
+          data: [{ id: `p${page}` }],
+          paging: { next: `https://graph.instagram.com/v21.0/user/media?after=${page}` },
+        };
+      },
+    });
+    assert.equal(items.length, 2);
+    assert.equal(page, 2);
   });
 
   it("builds a graph URL without putting the token in the query", () => {

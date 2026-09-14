@@ -49,7 +49,13 @@ export {
 
 export const GRAPH_HOST_DEFAULT = "graph.instagram.com";
 export const GRAPH_VERSION_DEFAULT = "v21.0";
-export const MAX_PAGES_DEFAULT = 3;
+/** Graph `/media` page size. 25 × 400 pages = 10,000, matching the ~10k most-recent ceiling. */
+export const MEDIA_PAGE_LIMIT = 25;
+/**
+ * Safety ceiling for Graph pagination. `fetchMediaPages` also stops when `paging.next` is gone,
+ * so this is a cap (≈10k items), not a requirement to fetch that many.
+ */
+export const MAX_PAGES_DEFAULT = 400;
 
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
 
@@ -362,16 +368,19 @@ export async function resolveUser(token, { host, version, userId }) {
 const MEDIA_FIELDS =
   "id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,children{id,media_type,media_url,thumbnail_url}";
 
-export async function fetchMediaPages(token, { host, version, userId, maxPages }) {
+export async function fetchMediaPages(
+  token,
+  { host, version, userId, maxPages, get = graphGet },
+) {
   const items = [];
   let url = graphUrl({
     host,
     version,
     path: `${userId}/media`,
-    search: { fields: MEDIA_FIELDS, limit: "25" },
+    search: { fields: MEDIA_FIELDS, limit: String(MEDIA_PAGE_LIMIT) },
   });
   for (let page = 0; page < maxPages && url; page++) {
-    const payload = await graphGet(url, token);
+    const payload = await get(url, token);
     items.push(...(payload.data || []));
     url = payload.paging?.next ? new URL(payload.paging.next) : null;
   }

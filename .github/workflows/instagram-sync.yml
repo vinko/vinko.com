@@ -119,7 +119,25 @@ jobs:
             echo "This PR does **not** deploy to www.vinko.com. GitHub Pages preview updates only after merge to \`${DEFAULT_BRANCH}\` *and* \`draft: false\`."
             echo
             if [ -f instagram-sync-report.md ]; then
-              cat instagram-sync-report.md
+              MAX_REPORT_LINES=200
+              MAX_REPORT_BYTES=51200
+              REPORT_LINES=$(wc -l < instagram-sync-report.md)
+              REPORT_BYTES=$(wc -c < instagram-sync-report.md)
+              # GitHub PR bodies cap at 65536 characters; deep-sync reports exceed that.
+              if [ "$REPORT_LINES" -le "$MAX_REPORT_LINES" ] && [ "$REPORT_BYTES" -le "$MAX_REPORT_BYTES" ]; then
+                cat instagram-sync-report.md
+              else
+                REPORT_SNIPPET=$(mktemp)
+                head -n "$MAX_REPORT_LINES" instagram-sync-report.md > "$REPORT_SNIPPET"
+                if [ "$(wc -c < "$REPORT_SNIPPET")" -gt "$MAX_REPORT_BYTES" ]; then
+                  head -c "$MAX_REPORT_BYTES" "$REPORT_SNIPPET"
+                  echo
+                else
+                  cat "$REPORT_SNIPPET"
+                fi
+                rm -f "$REPORT_SNIPPET"
+                echo "Report truncated — see Actions artifact \`instagram-sync-report\`."
+              fi
             fi
             echo
             echo "See [docs/instagram-sync.md](docs/instagram-sync.md)."

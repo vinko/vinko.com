@@ -41,8 +41,9 @@ Facebook Login / `graph.facebook.com` is not required for Instagram Login tokens
 ## What the workflow does
 
 - File: [`.github/workflows/instagram-sync.yml`](../.github/workflows/instagram-sync.yml)
-- Triggers: daily `0 2 * * *` UTC, plus **Run workflow** (`workflow_dispatch`)
+- Triggers: daily `0 2 * * *` UTC, plus **Run workflow** (`workflow_dispatch`) with optional `max_pages` (default **400**)
 - Script: [`scripts/instagram-sync.mjs`](../scripts/instagram-sync.mjs) (`npm run instagram-sync`)
+- Pagination: Graph `/media` uses `limit=25` per page. The Instagram Graph API exposes about the **10,000 most recent** media objects; **25 × 400 pages = 10,000**. The importer stops when `paging.next` is gone, and `maxPages` (default 400) is only a safety ceiling.
 - Every new IMAGE / CAROUSEL_ALBUM item becomes a candidate Markdown file under `src/content/posts/instagram-{id}.md`
 - Images are downloaded into `public/instagram/{id}/` (not left as ephemeral Meta `media_url`)
 - VIDEO / REELS are lightly stubbed (thumbnail if present; otherwise a short note + permalink)
@@ -100,6 +101,7 @@ Requires Node 22+. No extra npm packages.
 export INSTAGRAM_ACCESS_TOKEN="…"   # never commit
 # export INSTAGRAM_USER_ID="…"      # optional
 npm run instagram-sync              # or: npm run instagram-sync -- --dry-run
+# npm run instagram-sync -- --max-pages 400   # default; 25×400 ≈ Graph ~10k ceiling
 ```
 
 A `.env` file at the repo root is loaded if present (`INSTAGRAM_ACCESS_TOKEN=…`). `.env` is gitignored.

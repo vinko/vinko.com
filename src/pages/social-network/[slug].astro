@@ -72,7 +72,7 @@ const relatedHasTags = related.some((item) => postTags(item).length > 0);
       {tags.length > 0 && (
         <nav class="post-tags" aria-label="Tags">
           <p class="post-tags-label">Tags</p>
-          <TagList tags={tags} />
+          <TagList tags={tags} compact />
         </nav>
       )}
     </div>

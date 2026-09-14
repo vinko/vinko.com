@@ -387,10 +387,34 @@ a:hover {
   display: none;
 }
 
+.listing-tools {
+  margin: 0 0 0.95rem;
+}
+
+.listing-tools-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.listing-tools-start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
 .tag-reveal {
   display: flex;
   justify-content: flex-end;
   margin: 0 0 0.95rem;
+  margin-left: auto;
+}
+
+.listing-tools .tag-reveal {
+  margin-bottom: 0;
 }
 
 .tag-reveal-btn {
@@ -475,12 +499,16 @@ a:hover {
 }
 
 .tag-browser {
-  margin: 0 0 1.75rem;
+  margin: 0.75rem 0 0;
   padding: 1rem 1.1rem 1.15rem;
   background: var(--elevated);
   border: 1px solid var(--hairline);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+}
+
+.tag-browser[hidden] {
+  display: none;
 }
 
 .tag-browser-head {
@@ -524,6 +552,21 @@ a:hover {
 .tag-filter-all:hover {
   background: var(--accent);
   color: #fff;
+}
+
+.tag-filter-clear {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.tag-filter-clear:hover {
+  color: var(--accent);
 }
 
 .tag-filter .tag-list a {
@@ -571,38 +614,47 @@ a:hover {
 }
 
 .post-body .post-tags {
-  margin-top: 1.75rem;
+  margin-top: 1.5rem;
 }
 
 .post-tags {
-  margin-top: 1.35rem;
-  padding: 1rem 1.15rem 1.2rem;
-  background: #fff;
-  border: 2px solid var(--accent);
-  border-radius: 14px;
+  margin-top: 0;
+  padding: 0.85rem 0 0;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--hairline);
+  border-radius: 0;
 }
 
 .post-tags-label {
-  margin: 0 0 0.65rem;
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: -0.015em;
-  color: var(--text);
+  margin: 0 0 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 .post-tags .tag-list {
-  gap: 0.55rem;
+  gap: 0.35rem;
 }
 
 .post-tags .tag-list a {
-  min-height: 2.7rem;
-  padding: 0 1.1rem;
-  font-size: 1.05rem;
-  font-weight: 700;
-  background: #e8f1ff;
-  color: #003888;
-  border: 2px solid var(--accent);
+  min-height: 1.85rem;
+  padding: 0 0.62rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--hairline);
   box-shadow: none;
+}
+
+.post-tags .tag-list a:hover,
+.post-tags .tag-list a[aria-current="page"] {
+  background: var(--elevated);
+  color: var(--accent);
+  border-color: rgba(0, 113, 227, 0.35);
 }
 
 .post-footer {

@@ -10,6 +10,12 @@ on:
   schedule:
     - cron: "0 2 * * *"
   workflow_dispatch:
+    inputs:
+      max_pages:
+        description: "Graph API pages to fetch (25 items each; 400 ≈ 10k most-recent media ceiling). Stops early when paging.next is gone."
+        required: false
+        type: number
+        default: 400
 
 permissions:
   contents: write
@@ -74,7 +80,8 @@ jobs:
         env:
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
           INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
-        run: node scripts/instagram-sync.mjs
+        # github.event.inputs is empty on schedule; fall back to 400 (25×400 ≈ Graph ~10k ceiling).
+        run: node scripts/instagram-sync.mjs --max-pages ${{ github.event.inputs.max_pages || 400 }}
 
       - name: Upload sync report
         if: always()

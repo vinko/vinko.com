@@ -14,4 +14,4 @@ instagramPermalink: "https://www.instagram.com/p/Bs-IO-EhCvo/"
 
 ![](/wp-content/uploads/2019/01/91753-49997670_139856297031910_3662952812766074955_n.jpg)
 
-from Instagram: https://www.instagram.com/p/Bs-IO-EhCvo/
+Originally posted on [Instagram](https://www.instagram.com/p/Bs-IO-EhCvo/).

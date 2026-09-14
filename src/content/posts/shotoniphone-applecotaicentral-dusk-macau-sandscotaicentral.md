@@ -13,4 +13,4 @@ instagramPermalink: "https://www.instagram.com/p/BlyjCezAzJF/"
 
 ![](/wp-content/uploads/2018/07/21070-37791564_240507950106352_6072834584016322560_n.jpg)
 
-from Instagram: https://www.instagram.com/p/BlyjCezAzJF/
+Originally posted on [Instagram](https://www.instagram.com/p/BlyjCezAzJF/).

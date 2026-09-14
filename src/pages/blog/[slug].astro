@@ -14,23 +14,35 @@ export async function getStaticPaths() {
   const all = await getCollection("posts");
   const blog = publishedPosts(all).map((post) => ({
     params: { slug: post.id },
-    props: { post },
+    props: { post, redirectTo: null as string | null },
   }));
   const moved = all
     .filter(isInstagramPost)
     .filter((post) => !post.id.startsWith("instagram-"))
     .map((post) => ({
       params: { slug: post.id },
-      redirect: socialPostHref(post),
+      props: { post, redirectTo: socialPostHref(post) },
     }));
-  const dupes = Object.entries(duplicateRedirects).map(([from, to]) => ({
-    params: { slug: from },
-    redirect: withBase(`/social-network/${to}/`),
-  }));
+  const existing = new Set(all.map((post) => post.id));
+  const dupes = Object.entries(duplicateRedirects)
+    .filter(([from]) => !existing.has(from))
+    .map(([from, to]) => ({
+      params: { slug: from },
+      props: {
+        post: undefined,
+        redirectTo: withBase(`/social-network/${to}/`),
+      },
+    }));
   return [...blog, ...moved, ...dupes];
 }
 
-const { post } = Astro.props;
+const { post, redirectTo } = Astro.props;
+if (redirectTo) {
+  return Astro.redirect(encodeURI(redirectTo), 301);
+}
+if (!post) {
+  return Astro.redirect(withBase("/blog/"), 302);
+}
 const { Content } = await render(post);
 ---
 <BaseLayout title={post.data.title} description={post.data.description || post.data.title}>

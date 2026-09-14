@@ -3,6 +3,8 @@
  * Reclassify WordPress-migrated Instagram shares into Social Network.
  *
  * Adds `source: instagram`, caption hashtags → tags, and resolved permalinks.
+ * `--polish` / `--dedupe` removes long-slug permalink duplicates and rewrites
+ * `from Instagram:` lines to `Originally posted on [Instagram](url).`
  * Never sets draft: false. Does not deploy.
  */
 
@@ -92,11 +94,89 @@ export function upsertWpInstagramFrontmatter(markdown, { tags, permalink }) {
   return { markdown: tagged.markdown, changed: changed || tagged.changed };
 }
 
+export function instagramAttributionMarkdown(permalink) {
+  return `Originally posted on [Instagram](${permalink}).`;
+}
+
+export function titleFromFrontmatter(markdown) {
+  const quoted = markdown.match(/^title:\s*"([^"]*)"/m)?.[1];
+  if (quoted != null) return quoted;
+  return markdown.match(/^title:\s*(.+)$/m)?.[1]?.trim() || "";
+}
+
+export function permalinkFromPost(markdown) {
+  const fromFm = markdown.match(/instagramPermalink:\s*"([^"]+)"/)?.[1] || "";
+  return permalinkFromResolved(fromFm) || permalinkFromResolved(markdown);
+}
+
+export function isCaptionAsSlug(slug, title) {
+  const s = String(slug || "");
+  if (s.length < 48) return false;
+  const t = String(title || "")
+    .toLowerCase()
+    .replace(/['’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  if (!t) return false;
+  return t.startsWith(s.slice(0, 32)) || s.startsWith(t.slice(0, 32));
+}
+
+export function chooseDuplicateKeeper(items) {
+  return [...items].sort((a, b) => {
+    const graphA = a.name.startsWith("instagram-") ? 0 : 1;
+    const graphB = b.name.startsWith("instagram-") ? 0 : 1;
+    if (graphA !== graphB) return graphA - graphB;
+    const captionA = isCaptionAsSlug(a.slug, a.title) ? 1 : 0;
+    const captionB = isCaptionAsSlug(b.slug, b.title) ? 1 : 0;
+    if (captionA !== captionB) return captionA - captionB;
+    if (a.slug.length !== b.slug.length) return a.slug.length - b.slug.length;
+    const descA = /^description:/m.test(a.text) ? 0 : 1;
+    const descB = /^description:/m.test(b.text) ? 0 : 1;
+    if (descA !== descB) return descA - descB;
+    return a.slug.localeCompare(b.slug);
+  })[0];
+}
+
+export function mergeDuplicateKeeper(keeperText, dropText) {
+  const { fm, body, hasFrontmatter } = splitMarkdown(keeperText);
+  if (!hasFrontmatter) return keeperText;
+  let nextFm = fm;
+  const dropUpdated = dropText.match(/^updatedDate:\s*(.+)$/m)?.[1];
+  if (dropUpdated && !/^updatedDate:/m.test(nextFm)) {
+    if (/^pubDate: .+$/m.test(nextFm)) {
+      nextFm = nextFm.replace(/^(pubDate: .+)$/m, `$1\nupdatedDate: ${dropUpdated}`);
+    } else {
+      nextFm = `${nextFm}\nupdatedDate: ${dropUpdated}`;
+    }
+  }
+  const dropDesc = dropText.match(/^description:\s*(.+)$/m)?.[1];
+  if (dropDesc && !/^description:/m.test(nextFm)) {
+    if (/^title: .+$/m.test(nextFm)) {
+      nextFm = nextFm.replace(/^(title: .+)$/m, `$1\ndescription: ${dropDesc}`);
+    } else {
+      nextFm = `${nextFm}\ndescription: ${dropDesc}`;
+    }
+  }
+  const nextBody = body.startsWith("\n") ? body : `\n${body}`;
+  let next = `---\n${nextFm}\n---\n${nextBody}`;
+  const keepAlt = next.match(/!\[([^\]]*)\]\(/);
+  const dropAlt = dropText.match(/!\[([^\]]*)\]\(/);
+  if (keepAlt && dropAlt && !keepAlt[1].trim() && dropAlt[1].trim()) {
+    next = next.replace(/!\[\]\(/, `![${dropAlt[1]}](`);
+  }
+  return next;
+}
+
+/** Match Graph API imports: hyperlink the word Instagram. */
 export function rewriteFromInstagramLine(markdown, permalink) {
-  if (!permalink) return markdown;
-  return markdown.replace(
-    /from Instagram:\s*https?:\/\/bit\.ly\/[A-Za-z0-9]+/gi,
-    `from Instagram: ${permalink}`,
+  return String(markdown).replace(
+    /from Instagram:\s*(https?:\/\/[^\s]+)/gi,
+    (_match, url) => {
+      const cleaned = String(url).replace(/[.,;]+$/g, "");
+      const resolved =
+        permalinkFromResolved(permalink || cleaned) || permalink || cleaned;
+      return instagramAttributionMarkdown(resolved);
+    },
   );
 }
 
@@ -263,8 +343,108 @@ export async function reclassifyWpInstagramPosts({
   };
 }
 
+export async function polishWpInstagramPosts({
+  postsDir = POSTS_DIR,
+  redirectsPath = REDIRECTS_PATH,
+  dryRun = false,
+} = {}) {
+  const files = await listPostFiles(postsDir);
+  const loaded = [];
+  for (const file of files) {
+    const text = await readFile(file, "utf8");
+    const name = file.split(/[/\\]/).pop();
+    const slug = name.replace(/\.md$/, "");
+    const permalink = permalinkFromPost(text);
+    const isInstagram =
+      name.startsWith("instagram-") ||
+      /^source:\s*instagram$/m.test(text) ||
+      Boolean(parseInstagramIdFromFrontmatter(text)) ||
+      isWpInstagramShare(text) ||
+      /Originally posted on \[Instagram\]/i.test(text);
+    loaded.push({
+      file,
+      name,
+      slug,
+      title: titleFromFrontmatter(text),
+      text,
+      permalink,
+      shortcode: instagramShortcodeFromUrl(permalink || text),
+      isInstagram,
+    });
+  }
+
+  const byCode = new Map();
+  for (const item of loaded.filter((post) => post.isInstagram && post.shortcode)) {
+    const group = byCode.get(item.shortcode) || [];
+    group.push(item);
+    byCode.set(item.shortcode, group);
+  }
+
+  const duplicates = [];
+  const deleted = new Set();
+  const redirects = {};
+  if (redirectsPath) {
+    try {
+      Object.assign(redirects, JSON.parse(await readFile(redirectsPath, "utf8")));
+    } catch {
+      // New redirects file.
+    }
+  }
+
+  for (const group of byCode.values()) {
+    if (group.length < 2) continue;
+    const keeper = chooseDuplicateKeeper(group);
+    let keeperText = keeper.text;
+    for (const drop of group.filter((item) => item.name !== keeper.name)) {
+      keeperText = mergeDuplicateKeeper(keeperText, drop.text);
+      duplicates.push({ drop: drop.name, keep: keeper.name, reason: "permalink" });
+      redirects[drop.slug] = keeper.slug;
+      deleted.add(drop.file);
+      if (!dryRun) await unlink(drop.file);
+    }
+    if (keeperText !== keeper.text) {
+      keeper.text = keeperText;
+      if (!dryRun) await writeFile(keeper.file, keeperText, "utf8");
+    }
+  }
+
+  const rewrittenFiles = [];
+  for (const item of loaded) {
+    if (deleted.has(item.file) || !item.isInstagram) continue;
+    if (item.name.startsWith("instagram-") || parseInstagramIdFromFrontmatter(item.text)) {
+      continue;
+    }
+    const next = rewriteFromInstagramLine(item.text, item.permalink);
+    if (next === item.text) continue;
+    rewrittenFiles.push(item.name);
+    if (!dryRun) await writeFile(item.file, next, "utf8");
+  }
+
+  if (!dryRun && redirectsPath) {
+    const sorted = Object.fromEntries(
+      Object.entries(redirects).sort(([left], [right]) => left.localeCompare(right)),
+    );
+    await writeFile(redirectsPath, `${JSON.stringify(sorted, null, 2)}\n`, "utf8");
+  }
+
+  return {
+    duplicates: duplicates.length,
+    duplicatePairs: duplicates,
+    rewritten: rewrittenFiles.length,
+    rewrittenFiles,
+    redirects,
+    dryRun,
+  };
+}
+
 async function main() {
   const dryRun = process.argv.includes("--dry-run");
+  const polish = process.argv.includes("--polish") || process.argv.includes("--dedupe");
+  if (polish) {
+    const result = await polishWpInstagramPosts({ dryRun });
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
   const result = await reclassifyWpInstagramPosts({ dryRun });
   console.log(
     JSON.stringify(

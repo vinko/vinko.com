@@ -9,4 +9,4 @@ instagramPermalink: "https://www.instagram.com/p/02dO34zSsg/"
 
 ![](/wp-content/uploads/2015/03/9caf0-928765_441235799388145_8096391_n.jpg)
 
-from Instagram: https://www.instagram.com/p/02dO34zSsg/
+Originally posted on [Instagram](https://www.instagram.com/p/02dO34zSsg/).

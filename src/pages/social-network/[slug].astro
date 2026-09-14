@@ -12,14 +12,36 @@ import {
   socialPostHref,
 } from "../../lib/posts";
 import { withBase } from "../../lib/url";
+import duplicateRedirects from "../../data/instagram-duplicate-redirects.json";
 
 export async function getStaticPaths() {
   const all = await getCollection("posts");
   const posts = instagramPosts(all);
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post, all } }));
+  const live = posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post, all, redirectTo: null as string | null },
+  }));
+  const liveIds = new Set(posts.map((post) => post.id));
+  const dupes = Object.entries(duplicateRedirects)
+    .filter(([from]) => !liveIds.has(from))
+    .map(([from, to]) => ({
+      params: { slug: from },
+      props: {
+        post: undefined,
+        all,
+        redirectTo: withBase(`/social-network/${to}/`),
+      },
+    }));
+  return [...live, ...dupes];
 }
 
-const { post, all } = Astro.props;
+const { post, all, redirectTo } = Astro.props;
+if (redirectTo) {
+  return Astro.redirect(encodeURI(redirectTo), 301);
+}
+if (!post) {
+  return Astro.redirect(withBase("/social-network/"), 302);
+}
 const { Content } = await render(post);
 const tags = postTags(post);
 const { previous, next } = instagramNeighbors(all, post);

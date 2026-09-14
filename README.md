@@ -74,6 +74,8 @@ A scheduled Action can fetch **@vinko** Instagram Business/Creator posts and wri
 
 Instagram-sourced posts (including historical WordPress shares and unpublished drafts) are listed on **Social Network** (`/social-network/`). The main blog still uses `publishedPosts()` and omits drafts *and* `source: instagram`.
 
+WordPress-migrated Instagram shares use the same back-link as Graph imports: `Originally posted on [Instagram](permalink).` Duplicate long caption-as-slug posts that share an Instagram permalink are removed; `/blog/{old-slug}/` and `/social-network/{old-slug}/` 301 to the kept Social Network slug.
+
 This does **not** publish to www.vinko.com or ICDSoft. After Vinko OK, set `draft: false` only if a post should leave draft state — it still will not appear on the main blog while `source: instagram` is set. Required secret: `INSTAGRAM_ACCESS_TOKEN` (optional `INSTAGRAM_USER_ID`). Full setup: [docs/instagram-sync.md](docs/instagram-sync.md).
 
 ### Important — no live deploy without confirmation

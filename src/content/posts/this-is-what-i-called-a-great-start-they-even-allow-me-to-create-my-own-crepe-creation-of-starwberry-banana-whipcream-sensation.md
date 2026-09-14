@@ -11,4 +11,4 @@ instagramPermalink: "https://www.instagram.com/p/BLaXU3PlvHP/"
 
 ![](/wp-content/uploads/2016/10/e1bc7-14677396_531865827017476_1903298698339680256_n.jpg)
 
-from Instagram: https://www.instagram.com/p/BLaXU3PlvHP/
+Originally posted on [Instagram](https://www.instagram.com/p/BLaXU3PlvHP/).

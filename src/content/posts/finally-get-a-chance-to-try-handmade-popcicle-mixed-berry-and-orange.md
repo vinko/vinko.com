@@ -10,4 +10,4 @@ instagramPermalink: "https://www.instagram.com/p/BBwsTtOzSuZ/"
 
 ![](/wp-content/uploads/2016/02/5c0e8-12627967_241065699560294_304704453_n.jpg)
 
-from Instagram: https://www.instagram.com/p/BBwsTtOzSuZ/
+Originally posted on [Instagram](https://www.instagram.com/p/BBwsTtOzSuZ/).

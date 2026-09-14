@@ -9,4 +9,4 @@ instagramPermalink: "https://www.instagram.com/p/yoGSyPzSny/"
 
 ![](/wp-content/uploads/2015/02/c1cb8-10950436_847957171917552_646206448_n.jpg)
 
-from Instagram: https://www.instagram.com/p/yoGSyPzSny/
+Originally posted on [Instagram](https://www.instagram.com/p/yoGSyPzSny/).

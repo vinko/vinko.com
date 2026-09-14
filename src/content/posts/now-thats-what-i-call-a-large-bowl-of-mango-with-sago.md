@@ -7,4 +7,4 @@ instagramPermalink: "https://www.instagram.com/p/80QRpwTSpb/"
 
 ![](/wp-content/uploads/2015/10/de799-12144221_485957511586757_511049744_n.jpg)
 
-from Instagram: https://www.instagram.com/p/80QRpwTSpb/
+Originally posted on [Instagram](https://www.instagram.com/p/80QRpwTSpb/).

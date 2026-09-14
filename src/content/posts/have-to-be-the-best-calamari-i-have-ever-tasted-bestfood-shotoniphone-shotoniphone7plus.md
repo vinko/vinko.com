@@ -12,4 +12,4 @@ instagramPermalink: "https://www.instagram.com/p/BRIzwBpAiRp/"
 
 ![](/wp-content/uploads/2017/03/22ba1-16908556_1586266554735541_2615193229913489408_n.jpg)
 
-from Instagram: https://www.instagram.com/p/BRIzwBpAiRp/
+Originally posted on [Instagram](https://www.instagram.com/p/BRIzwBpAiRp/).

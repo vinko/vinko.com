@@ -4,14 +4,16 @@ import { withBase } from "../lib/url";
 interface Props {
   years: number[];
   current?: number | "all";
+  /** Archive root, already passed through `withBase()` (trailing slash). */
+  base?: string;
 }
 
-const { years, current = "all" } = Astro.props;
+const { years, current = "all", base = withBase("/blog/") } = Astro.props;
 ---
 <nav class="year-nav" aria-label="Filter posts by year">
-  <a href={withBase("/blog/")} aria-current={current === "all" ? "page" : undefined}>All</a>
+  <a href={base} aria-current={current === "all" ? "page" : undefined}>All</a>
   {years.map((year) => (
-    <a href={withBase(`/blog/year/${year}/`)} aria-current={current === year ? "page" : undefined}>
+    <a href={`${base}year/${year}/`} aria-current={current === year ? "page" : undefined}>
       {year}
     </a>
   ))}

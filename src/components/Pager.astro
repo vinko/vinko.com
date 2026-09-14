@@ -3,9 +3,10 @@ interface Props {
   base: string;
   current: number;
   last: number;
+  label?: string;
 }
 
-const { base, current, last } = Astro.props;
+const { base, current, last, label = "Blog pages" } = Astro.props;
 
 function href(page: number): string {
   if (page <= 1) return base;
@@ -19,7 +20,7 @@ const pages: number[] = [];
 for (let i = start; i <= end; i++) pages.push(i);
 ---
 {last > 1 && (
-  <nav class="pager" aria-label="Blog pages">
+  <nav class="pager" aria-label={label}>
     {current > 1 ? (
       <a class="pager-dir" href={href(current - 1)}>Previous</a>
     ) : (

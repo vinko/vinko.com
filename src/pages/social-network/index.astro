@@ -1,0 +1,27 @@
+---
+import BlogArchive from "../../components/BlogArchive.astro";
+import { getCollection } from "astro:content";
+import { PAGE_SIZE, instagramPosts, postYears } from "../../lib/posts";
+import { withBase } from "../../lib/url";
+
+const all = instagramPosts(await getCollection("posts"));
+const years = postYears(all);
+const lastPage = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+const posts = all.slice(0, PAGE_SIZE);
+const archiveBase = withBase("/social-network/");
+---
+<BlogArchive
+  title="Social Network"
+  description="Instagram posts — Vinko’s Thoughts On… at vinko.com"
+  heading="Social Network"
+  lead={`Instagram posts, including unpublished drafts for preview. ${all.length.toLocaleString("en-US")} entries, newest first.`}
+  posts={posts}
+  years={years}
+  currentYear="all"
+  page={1}
+  lastPage={lastPage}
+  pagerBase={archiveBase}
+  yearBase={archiveBase}
+  postBase={archiveBase}
+  pagerLabel="Social Network pages"
+/>

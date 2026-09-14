@@ -6,14 +6,15 @@ import { withBase } from "../lib/url";
 interface Props {
   post: Post;
   heading?: "h2" | "h3";
+  href?: string;
 }
 
-const { post, heading = "h2" } = Astro.props;
+const { post, heading = "h2", href = withBase(`/blog/${post.id}/`) } = Astro.props;
 const image = firstImage(post.body);
 const Heading = heading;
 ---
 <li class="post-card">
-  <a href={withBase(`/blog/${post.id}/`)}>
+  <a href={href}>
     {image ? (
       <div class="card-media">
         <img src={image.src} alt="" width="640" height="400" />

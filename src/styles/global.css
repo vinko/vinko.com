@@ -377,10 +377,10 @@ a:hover {
 
 .card-tags {
   flex: 0 0 auto;
-  padding: 0.9rem 1.2rem 1.2rem;
+  padding: 0.75rem 1.2rem 1.05rem;
   margin-top: 0;
   border-top: 1px solid var(--hairline);
-  background: #e8f1fc;
+  background: transparent;
 }
 
 .card-tags[hidden] {
@@ -442,7 +442,6 @@ a:hover {
   border-color: rgba(0, 113, 227, 0.35);
 }
 
-.card-tags-label,
 .tag-browser-label {
   margin: 0 0 0.5rem;
   font-size: 0.72rem;
@@ -626,6 +625,7 @@ a:hover {
   border-radius: 0;
 }
 
+.card-tags-label,
 .post-tags-label {
   margin: 0 0 0.4rem;
   font-size: 0.7rem;
@@ -635,10 +635,12 @@ a:hover {
   color: var(--muted);
 }
 
+.card-tags .tag-list,
 .post-tags .tag-list {
   gap: 0.35rem;
 }
 
+.card-tags .tag-list a,
 .post-tags .tag-list a {
   min-height: 1.85rem;
   padding: 0 0.62rem;
@@ -650,9 +652,11 @@ a:hover {
   box-shadow: none;
 }
 
+.card-tags .tag-list a:hover,
+.card-tags .tag-list a[aria-current="page"],
 .post-tags .tag-list a:hover,
 .post-tags .tag-list a[aria-current="page"] {
-  background: var(--elevated);
+  background: rgba(0, 113, 227, 0.06);
   color: var(--accent);
   border-color: rgba(0, 113, 227, 0.35);
 }

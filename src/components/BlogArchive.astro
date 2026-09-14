@@ -81,7 +81,7 @@ const canFilterTags = browseTags.length > 0;
             <div class="tag-browser-head">
               <p class="tag-browser-label">Browse tags</p>
               <span class="tag-browser-hint">
-                {currentTag ? `Filtered by #${currentTag}` : "Jump to a hashtag"}
+                {currentTag ? `Filtered by ${currentTag}` : "Jump to a tag"}
               </span>
             </div>
             <TagList tags={browseTags} current={currentTag} />

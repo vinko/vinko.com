@@ -321,10 +321,9 @@ a:hover {
 .post-card-link {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 auto;
   color: inherit;
   text-decoration: none;
-  min-height: 100%;
 }
 
 .card-media {
@@ -377,6 +376,7 @@ a:hover {
 }
 
 .card-tags {
+  flex: 0 0 auto;
   padding: 0.9rem 1.2rem 1.2rem;
   margin-top: 0;
   border-top: 1px solid var(--hairline);

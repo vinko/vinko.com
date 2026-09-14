@@ -1,5 +1,6 @@
 ---
-title: "Roasted Honey Sesame #Walnuts #mandarinmacau #vidarica #macau #shotoniphone #shotoniphonex"
+title: "Roasted Honey Sesame"
+description: "Roasted Honey Sesame"
 pubDate: 2017-12-08
 tags:
   - "walnuts"
@@ -12,6 +13,8 @@ source: instagram
 instagramPermalink: "https://www.instagram.com/p/BcbkS4cAQG0/"
 ---
 
-![](/wp-content/uploads/2017/12/704bf-25006199_164945457441733_5376138550133653504_n.jpg)
+![Roasted Honey Sesame](/wp-content/uploads/2017/12/704bf-25006199_164945457441733_5376138550133653504_n.jpg)
+
+Roasted Honey Sesame
 
 Originally posted on [Instagram](https://www.instagram.com/p/BcbkS4cAQG0/).

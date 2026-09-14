@@ -18,15 +18,40 @@ import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { pipeline } from "node:stream/promises";
 import { Readable } from "node:stream";
+import {
+  DESCRIPTION_MAX,
+  TITLE_MAX,
+  cleanCaptionProse,
+  descriptionFromCaption,
+  insertFrontmatterTags,
+  parseFrontmatterTags,
+  parseHashtags,
+  splitMarkdown,
+  stripHashtags,
+  titleFromCaption,
+  truncate,
+  yamlScalar,
+} from "./instagram-caption.mjs";
+
+export {
+  DESCRIPTION_MAX,
+  TITLE_MAX,
+  descriptionFromCaption,
+  insertFrontmatterTags,
+  parseFrontmatterTags,
+  parseHashtags,
+  splitMarkdown,
+  stripHashtags,
+  titleFromCaption,
+  truncate,
+  yamlScalar,
+};
 
 export const GRAPH_HOST_DEFAULT = "graph.instagram.com";
 export const GRAPH_VERSION_DEFAULT = "v21.0";
 export const MAX_PAGES_DEFAULT = 3;
-export const TITLE_MAX = 90;
-export const DESCRIPTION_MAX = 160;
 
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
-const HASHTAG_RE = /#([\p{L}\p{N}_]+)/gu;
 
 export function parseArgs(argv = process.argv.slice(2)) {
   const out = {
@@ -76,67 +101,12 @@ export function missingTokenMessage() {
   ].join("\n");
 }
 
-export function parseHashtags(caption) {
-  if (!caption) return [];
-  const seen = new Set();
-  const tags = [];
-  for (const match of caption.matchAll(HASHTAG_RE)) {
-    const tag = match[1].toLowerCase();
-    if (!seen.has(tag)) {
-      seen.add(tag);
-      tags.push(tag);
-    }
-  }
-  return tags;
-}
-
-export function stripHashtags(text) {
-  if (!text) return "";
-  return text
-    .replace(HASHTAG_RE, "")
-    .replace(/[ \t]+\n/g, "\n")
-    .replace(/[ \t]{2,}/g, " ")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
-export function truncate(text, max) {
-  const value = (text || "").trim();
-  if (value.length <= max) return value;
-  const sliced = value.slice(0, max - 1);
-  const space = sliced.lastIndexOf(" ");
-  const base = space >= Math.min(40, max / 2) ? sliced.slice(0, space) : sliced;
-  return `${base.trimEnd()}…`;
-}
-
 export function pubDateFromTimestamp(timestamp) {
   const date = timestamp ? new Date(timestamp) : new Date();
   if (Number.isNaN(date.valueOf())) {
     return new Date().toISOString().slice(0, 10);
   }
   return date.toISOString().slice(0, 10);
-}
-
-export function titleFromCaption(caption, dateStr) {
-  const fallback = `Instagram post ${dateStr}`;
-  if (!caption?.trim()) return fallback;
-  const line = caption
-    .split(/\r?\n/)
-    .map((item) => item.trim())
-    .find(Boolean);
-  if (!line) return fallback;
-  return truncate(line, TITLE_MAX);
-}
-
-export function descriptionFromCaption(caption) {
-  const stripped = stripHashtags(caption);
-  if (!stripped) return "";
-  const first = stripped.split(/\r?\n/).map((item) => item.trim()).find(Boolean) || stripped;
-  return truncate(first.replace(/\s+/g, " "), DESCRIPTION_MAX);
-}
-
-export function yamlScalar(value) {
-  return JSON.stringify(String(value));
 }
 
 export function buildFrontmatter({
@@ -234,7 +204,7 @@ export function buildPostBody({ caption, permalink, mediaType, imagePaths, title
     parts.push("");
   }
 
-  const bodyCaption = stripHashtags(caption);
+  const bodyCaption = cleanCaptionProse(caption);
   if (bodyCaption) {
     parts.push(bodyCaption);
     parts.push("");
@@ -267,58 +237,6 @@ function escapeAlt(text) {
 export function parseInstagramIdFromFrontmatter(source) {
   const match = source.match(/^[ \t]*instagramId:[ \t]*["']?([^\s"']+)/m);
   return match?.[1] || null;
-}
-
-export function parseFrontmatterTags(source) {
-  const block = source.match(/^---\n([\s\S]*?)\n---/);
-  const fm = block?.[1] ?? source;
-  const tags = [];
-  let inTags = false;
-  for (const line of fm.split("\n")) {
-    if (/^tags:\s*$/.test(line)) {
-      inTags = true;
-      continue;
-    }
-    if (inTags) {
-      const item = line.match(/^[ \t]+-[ \t]*["']?(.+?)["']?\s*$/);
-      if (item) {
-        const tag = item[1].trim();
-        if (tag) tags.push(tag);
-        continue;
-      }
-      if (line.trim() === "" || line.startsWith(" ") || line.startsWith("\t")) continue;
-      break;
-    }
-  }
-  return tags;
-}
-
-export function splitMarkdown(markdown) {
-  const match = String(markdown).match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
-  if (!match) return { fm: "", body: String(markdown), hasFrontmatter: false };
-  return { fm: match[1], body: match[2], hasFrontmatter: true };
-}
-
-/** Insert tags into YAML without changing `draft`. Does nothing when tags already exist. */
-export function insertFrontmatterTags(markdown, tags) {
-  if (!tags?.length) return { markdown, changed: false };
-  const { fm, body, hasFrontmatter } = splitMarkdown(markdown);
-  if (!hasFrontmatter) return { markdown, changed: false };
-  if (parseFrontmatterTags(markdown).length) return { markdown, changed: false };
-
-  const tagBlock = ["tags:", ...tags.map((tag) => `  - ${yamlScalar(tag)}`)].join("\n");
-  let nextFm;
-  if (/^tags:\s*$/m.test(fm)) {
-    nextFm = fm.replace(/^tags:\s*$/m, tagBlock);
-  } else if (/^draft: .+$/m.test(fm)) {
-    nextFm = fm.replace(/^(draft: .+)$/m, `$1\n${tagBlock}`);
-  } else if (/^pubDate: .+$/m.test(fm)) {
-    nextFm = fm.replace(/^(pubDate: .+)$/m, `$1\n${tagBlock}`);
-  } else {
-    nextFm = `${fm}\n${tagBlock}`;
-  }
-  const nextBody = body.startsWith("\n") ? body : `\n${body}`;
-  return { markdown: `---\n${nextFm}\n---\n${nextBody}`, changed: true };
 }
 
 export function instagramShortcodeFromUrl(url) {
@@ -549,11 +467,14 @@ export async function writePostFiles({
 }) {
   const instagramId = String(item.id);
   const pubDate = pubDateFromTimestamp(item.timestamp);
-  const title = titleFromCaption(item.caption, pubDate);
-  const description = descriptionFromCaption(item.caption);
   const tags = parseHashtags(item.caption);
   const permalink = item.permalink || "";
   const { mediaType, files } = collectDownloadableMedia(item);
+  const title = titleFromCaption(item.caption, pubDate, {
+    tags,
+    imageCount: files.length,
+  });
+  const description = descriptionFromCaption(item.caption);
 
   const imagePaths = [];
   const saved = [];

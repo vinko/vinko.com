@@ -70,7 +70,7 @@ If the preview 404s or the workflow cannot enable Pages: the repo is private. Gi
 
 ### Instagram drafts (Ask-First)
 
-A scheduled Action can fetch **@vinko** Instagram Business/Creator posts and write Markdown **drafts** (`draft: true`) on the `instagram-drafts` branch, then open or update a PR. Tags come from caption hashtags as-is. Images are stored under `public/instagram/{id}/`.
+A scheduled Action can fetch **@vinko** Instagram Business/Creator posts and write Markdown **drafts** (`draft: true`) on the `instagram-drafts` branch, then open or update a PR. Tags come from caption hashtags as-is. Important posts get short SEO titles; one-liners stay one-liners. Images are stored under `public/instagram/{id}/`.
 
 Instagram-sourced posts (including historical WordPress shares and unpublished drafts) are listed on **Social Network** (`/social-network/`). The main blog still uses `publishedPosts()` and omits drafts *and* `source: instagram`.
 

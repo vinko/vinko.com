@@ -62,9 +62,10 @@ const listingHref = withBase("/social-network/");
         <p class="post-meta">Updated {formatDate(post.data.updatedDate)}</p>
       )}
       {tags.length > 0 && (
-        <div class="post-tags">
+        <nav class="post-tags" aria-label="Tags">
+          <p class="post-tags-label">Tags</p>
           <TagList tags={tags} />
-        </div>
+        </nav>
       )}
     </header>
     <div class="page-shell page-shell--narrow prose prose--article">

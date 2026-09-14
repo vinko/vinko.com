@@ -52,6 +52,8 @@ Facebook Login / `graph.facebook.com` is not required for Instagram Login tokens
 
 Tags are hashtags parsed from the caption **as-is** (lowercase, `#` stripped, order preserved, de-duplicated). There is no category map.
 
+Titles: new imports call `titleFromCaption` in [`scripts/instagram-caption.mjs`](../scripts/instagram-caption.mjs). Hashtags/emoji are stripped from the title. **Important** posts (food reviews, landmarks, Michelin/notable meals, tech/history, substantial multi-image stories) get a short SEO title such as `Tonkatsu in Tsim Sha Tsui: Skip the Cheap Cut`. One-liners stay one-liners. The cleaned caption remains in the body. Existing Social Network posts can be rewritten with `npm run instagram-titles` (never sets `draft: false`).
+
 ## How drafts appear
 
 New files look like:

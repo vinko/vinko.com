@@ -44,6 +44,13 @@ describe("hashtags", () => {
     assert.match(body, /Lunch in Macau/);
     assert.match(body, /See you/);
   });
+
+  it("keeps inline hashtags as words instead of leaving holes", () => {
+    assert.equal(
+      stripHashtags("Pretty good #chocolate and #wafer. Especially the #DarkChocolate"),
+      "Pretty good Chocolate and Wafer. Especially the Dark Chocolate",
+    );
+  });
 });
 
 describe("title and description", () => {
@@ -57,16 +64,53 @@ describe("title and description", () => {
     assert.equal(titleFromCaption(null, "2026-09-14"), "Instagram post 2026-09-14");
   });
 
-  it("truncates long titles", () => {
-    const long = "A".repeat(200);
+  it("fits long titles on a word boundary without a mid-word ellipsis", () => {
+    const long = `${"word ".repeat(40)}end`;
     const title = titleFromCaption(long, "2026-09-14");
     assert.ok(title.length <= 90);
-    assert.ok(title.endsWith("…"));
+    assert.equal(title.includes("…"), false);
+    assert.equal(title.includes("#"), false);
+    assert.match(title, /word$/);
   });
 
   it("builds a description without hashtags", () => {
     const description = descriptionFromCaption("Dim sum morning #food #macau");
     assert.equal(description, "Dim sum morning");
+  });
+
+  it("does not editorialize one-liners like a Tromsø transit note", () => {
+    assert.equal(titleFromCaption("Final leg to Tromsø", "2026-01-28"), "Final leg to Tromsø");
+  });
+
+  it("writes an SEO title for the Apple I anniversary post", () => {
+    const caption =
+      "43 years ago this day (April 1). Apple made history with Apple I without too much fan fare. Now 43 years later Apple has made a big impact in many people’s lives. Especially mine. Thank you Steve’s #apple #applehistory #stevewozniak #stevejobs";
+    assert.equal(
+      titleFromCaption(caption, "2019-04-01"),
+      "Apple I at 43: Why That Quiet Launch Still Matters",
+    );
+  });
+
+  it("writes an SEO title for a Tonkatsu review in Tsim Sha Tsui", () => {
+    const caption = `One of the better #Tonkatsu outside of #Japan. For better quality I suggest choosing the top tier pork classification, which are much more tender
+
+📍Tonkichi Tonkatsu Seafood, The One, Kowloon
+
+#tsimshatsui #hongkongfoodie #HongKong`;
+    assert.equal(
+      titleFromCaption(caption, "2026-09-10"),
+      "Tonkatsu in Tsim Sha Tsui: Skip the Cheap Cut",
+    );
+  });
+
+  it("prefers an existing 'best dish' sentence over a redundant Topic: Hook", () => {
+    assert.equal(
+      titleFromCaption(
+        "Although it’s 0700, I cannot bring myself to give this pass. The best Southern fried chicken in Hong Kong",
+        "2017-01-01",
+      ),
+      "The best Southern fried chicken in Hong Kong",
+    );
   });
 });
 

@@ -3,6 +3,7 @@ import BlogArchive from "../../../../../components/BlogArchive.astro";
 import { getCollection } from "astro:content";
 import {
   PAGE_SIZE,
+  instagramPopularTags,
   instagramPosts,
   instagramPostsByTag,
   instagramTagList,
@@ -30,6 +31,7 @@ const lastPage = Math.max(1, Math.ceil(tagged.length / PAGE_SIZE));
 const posts = tagged.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 const archiveBase = withBase("/social-network/");
 const count = tagged.length.toLocaleString("en-US");
+const browseTags = instagramPopularTags(all, 24, tag);
 ---
 <BlogArchive
   title={`#${tag} · Social Network · page ${page}`}
@@ -47,4 +49,5 @@ const count = tagged.length.toLocaleString("en-US");
   pagerLabel="Social Network tag pages"
   showTags
   currentTag={tag}
+  browseTags={browseTags}
 />

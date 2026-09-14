@@ -23,6 +23,7 @@ interface Props {
   pagerLabel?: string;
   showTags?: boolean;
   currentTag?: string;
+  browseTags?: string[];
 }
 
 const {
@@ -41,6 +42,7 @@ const {
   pagerLabel,
   showTags = false,
   currentTag,
+  browseTags = [],
 } = Astro.props;
 ---
 <BaseLayout title={title} description={description}>
@@ -49,13 +51,19 @@ const {
       <h1>{heading}</h1>
       <p class="lead">{lead}</p>
     </header>
-    {currentTag ? (
-      <nav class="tag-filter" aria-label="Tag filter">
-        <a class="tag-filter-all" href={postBase}>All posts</a>
-        <TagList tags={[currentTag]} current={currentTag} />
+    {years.length > 0 && <YearNav years={years} current={currentYear} base={yearBase} />}
+    {browseTags.length > 0 && (
+      <nav class="tag-browser" aria-label="Browse tags">
+        <div class="tag-browser-head">
+          <p class="tag-browser-label">Browse tags</p>
+          {currentTag ? (
+            <a class="tag-filter-all" href={postBase}>All posts</a>
+          ) : (
+            <span class="tag-browser-hint">Jump to a hashtag</span>
+          )}
+        </div>
+        <TagList tags={browseTags} current={currentTag} />
       </nav>
-    ) : (
-      years.length > 0 && <YearNav years={years} current={currentYear} base={yearBase} />
     )}
     <ul class="post-grid">
       {posts.map((post) => (

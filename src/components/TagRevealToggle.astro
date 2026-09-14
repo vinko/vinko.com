@@ -1,0 +1,46 @@
+---
+interface Props {
+  /** id of the post grid whose card tags this button reveals */
+  targetId: string;
+}
+
+const { targetId } = Astro.props;
+---
+<button
+  type="button"
+  class="tag-reveal-btn"
+  aria-expanded="false"
+  aria-controls={targetId}
+  data-tag-reveal
+>
+  Show tags
+</button>
+
+<script>
+  function setupTagReveal(button: HTMLButtonElement) {
+    if (button.dataset.bound === "true") return;
+    button.dataset.bound = "true";
+
+    const targetId = button.getAttribute("aria-controls");
+    const target = targetId ? document.getElementById(targetId) : null;
+    if (!target) return;
+
+    const panels = () => [...target.querySelectorAll<HTMLElement>(".card-tags")];
+
+    const sync = (expanded: boolean) => {
+      button.setAttribute("aria-expanded", String(expanded));
+      button.textContent = expanded ? "Hide tags" : "Show tags";
+      target.classList.toggle("is-showing-tags", expanded);
+      for (const panel of panels()) {
+        panel.hidden = !expanded;
+      }
+    };
+
+    sync(false);
+    button.addEventListener("click", () => {
+      sync(button.getAttribute("aria-expanded") !== "true");
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>("[data-tag-reveal]").forEach(setupTagReveal);
+</script>

@@ -9,9 +9,17 @@ interface Props {
   heading?: "h2" | "h3";
   href?: string;
   showTags?: boolean;
+  /** When showTags is set, keep chips in the DOM but hidden until a TagRevealToggle opens them. */
+  tagsCollapsed?: boolean;
 }
 
-const { post, heading = "h2", href = withBase(`/blog/${post.id}/`), showTags = false } = Astro.props;
+const {
+  post,
+  heading = "h2",
+  href = withBase(`/blog/${post.id}/`),
+  showTags = false,
+  tagsCollapsed = true,
+} = Astro.props;
 const image = firstImage(post.body);
 const Heading = heading;
 const tags = showTags ? postTags(post) : [];
@@ -36,7 +44,7 @@ const tags = showTags ? postTags(post) : [];
     </div>
   </a>
   {tags.length > 0 && (
-    <div class="card-tags">
+    <div class="card-tags" hidden={tagsCollapsed}>
       <p class="card-tags-label">Tags</p>
       <TagList tags={tags} />
     </div>

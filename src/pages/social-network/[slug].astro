@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostCard from "../../components/PostCard.astro";
 import TagList from "../../components/TagList.astro";
+import TagRevealToggle from "../../components/TagRevealToggle.astro";
 import { getCollection, render } from "astro:content";
 import {
   formatDate,
@@ -47,6 +48,8 @@ const tags = postTags(post);
 const { previous, next } = instagramNeighbors(all, post);
 const related = relatedInstagramPosts(all, post, 3);
 const listingHref = withBase("/social-network/");
+const relatedGridId = "related-post-grid";
+const relatedHasTags = related.some((item) => postTags(item).length > 0);
 ---
 <BaseLayout title={post.data.title} description={post.data.description || post.data.title}>
   <article>
@@ -61,15 +64,17 @@ const listingHref = withBase("/social-network/");
       {post.data.updatedDate && (
         <p class="post-meta">Updated {formatDate(post.data.updatedDate)}</p>
       )}
+    </header>
+    <div class="page-shell page-shell--narrow post-body">
+      <div class="prose prose--article">
+        <Content />
+      </div>
       {tags.length > 0 && (
         <nav class="post-tags" aria-label="Tags">
           <p class="post-tags-label">Tags</p>
           <TagList tags={tags} />
         </nav>
       )}
-    </header>
-    <div class="page-shell page-shell--narrow prose prose--article">
-      <Content />
     </div>
   </article>
 
@@ -95,8 +100,11 @@ const listingHref = withBase("/social-network/");
 
     {related.length > 0 && (
       <div class="related-block">
-        <h2 class="section-heading">More like this</h2>
-        <ul class="post-grid post-grid--related">
+        <div class="related-head">
+          <h2 class="section-heading">More like this</h2>
+          {relatedHasTags && <TagRevealToggle targetId={relatedGridId} />}
+        </div>
+        <ul class="post-grid post-grid--related" id={relatedGridId}>
           {related.map((item) => (
             <PostCard post={item} href={socialPostHref(item)} heading="h3" showTags />
           ))}

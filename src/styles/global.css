@@ -321,10 +321,9 @@ a:hover {
 .post-card-link {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 auto;
   color: inherit;
   text-decoration: none;
-  min-height: 100%;
 }
 
 .card-media {
@@ -377,10 +376,46 @@ a:hover {
 }
 
 .card-tags {
+  flex: 0 0 auto;
   padding: 0.9rem 1.2rem 1.2rem;
   margin-top: 0;
   border-top: 1px solid var(--hairline);
   background: #e8f1fc;
+}
+
+.card-tags[hidden] {
+  display: none;
+}
+
+.tag-reveal {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 0.95rem;
+}
+
+.tag-reveal-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
+  padding: 0 0.95rem;
+  border-radius: 980px;
+  border: 1px solid var(--hairline);
+  background: var(--elevated);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.tag-reveal-btn:hover,
+.tag-reveal-btn[aria-expanded="true"] {
+  color: var(--accent);
+  border-color: rgba(0, 113, 227, 0.35);
 }
 
 .card-tags-label,
@@ -531,6 +566,14 @@ a:hover {
   color: var(--accent);
 }
 
+.post-body {
+  padding-bottom: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.post-body .post-tags {
+  margin-top: 1.75rem;
+}
+
 .post-tags {
   margin-top: 1.35rem;
   padding: 1rem 1.15rem 1.2rem;
@@ -635,6 +678,19 @@ a:hover {
 
 .related-block {
   margin-top: 2.25rem;
+}
+
+.related-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.related-head .section-heading {
+  margin: 0;
 }
 
 .post-grid--related {

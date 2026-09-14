@@ -1,0 +1,26 @@
+---
+import { socialTagHref } from "../lib/posts";
+
+interface Props {
+  tags: string[];
+  current?: string;
+  compact?: boolean;
+}
+
+const { tags, current, compact = false } = Astro.props;
+const currentKey = current?.trim().toLowerCase();
+---
+{tags.length > 0 && (
+  <ul class:list={["tag-list", compact && "tag-list--compact"]}>
+    {tags.map((tag) => {
+      const active = currentKey != null && tag.toLowerCase() === currentKey;
+      return (
+        <li>
+          <a href={socialTagHref(tag)} aria-current={active ? "page" : undefined}>
+            #{tag}
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+)}

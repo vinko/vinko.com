@@ -34,7 +34,7 @@ jobs:
           node-version: "22"
 
       - name: Test sync helpers
-        run: node --test scripts/instagram-sync.test.mjs
+        run: node --test scripts/*.test.mjs
 
       - name: Check Instagram secrets
         env:

@@ -20,4 +20,17 @@ describe("instagram draft posts", () => {
       );
     }
   });
+
+  it("never writes draft: false on any Instagram-sourced markdown", async () => {
+    const names = (await readdir(postsDir)).filter((name) => name.endsWith(".md"));
+    let sourced = 0;
+    for (const name of names) {
+      const text = await readFile(new URL(name, postsDir), "utf8");
+      const isIg = /^source: instagram$/m.test(text) || /^instagramId:/m.test(text);
+      if (!isIg) continue;
+      sourced += 1;
+      assert.doesNotMatch(text, /^draft: false$/m, `${name} must not set draft: false`);
+    }
+    assert.ok(sourced >= 70, `expected Instagram-sourced posts, got ${sourced}`);
+  });
 });

@@ -269,15 +269,111 @@ export function parseInstagramIdFromFrontmatter(source) {
   return match?.[1] || null;
 }
 
-export async function collectExistingInstagramIds(postsDir) {
-  const ids = new Set();
+export function parseFrontmatterTags(source) {
+  const block = source.match(/^---\n([\s\S]*?)\n---/);
+  const fm = block?.[1] ?? source;
+  const tags = [];
+  let inTags = false;
+  for (const line of fm.split("\n")) {
+    if (/^tags:\s*$/.test(line)) {
+      inTags = true;
+      continue;
+    }
+    if (inTags) {
+      const item = line.match(/^[ \t]+-[ \t]*["']?(.+?)["']?\s*$/);
+      if (item) {
+        const tag = item[1].trim();
+        if (tag) tags.push(tag);
+        continue;
+      }
+      if (line.trim() === "" || line.startsWith(" ") || line.startsWith("\t")) continue;
+      break;
+    }
+  }
+  return tags;
+}
+
+export function splitMarkdown(markdown) {
+  const match = String(markdown).match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  if (!match) return { fm: "", body: String(markdown), hasFrontmatter: false };
+  return { fm: match[1], body: match[2], hasFrontmatter: true };
+}
+
+/** Insert tags into YAML without changing `draft`. Does nothing when tags already exist. */
+export function insertFrontmatterTags(markdown, tags) {
+  if (!tags?.length) return { markdown, changed: false };
+  const { fm, body, hasFrontmatter } = splitMarkdown(markdown);
+  if (!hasFrontmatter) return { markdown, changed: false };
+  if (parseFrontmatterTags(markdown).length) return { markdown, changed: false };
+
+  const tagBlock = ["tags:", ...tags.map((tag) => `  - ${yamlScalar(tag)}`)].join("\n");
+  let nextFm;
+  if (/^tags:\s*$/m.test(fm)) {
+    nextFm = fm.replace(/^tags:\s*$/m, tagBlock);
+  } else if (/^draft: .+$/m.test(fm)) {
+    nextFm = fm.replace(/^(draft: .+)$/m, `$1\n${tagBlock}`);
+  } else if (/^pubDate: .+$/m.test(fm)) {
+    nextFm = fm.replace(/^(pubDate: .+)$/m, `$1\n${tagBlock}`);
+  } else {
+    nextFm = `${fm}\n${tagBlock}`;
+  }
+  const nextBody = body.startsWith("\n") ? body : `\n${body}`;
+  return { markdown: `---\n${nextFm}\n---\n${nextBody}`, changed: true };
+}
+
+export function instagramShortcodeFromUrl(url) {
+  const match = String(url || "").match(
+    /instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/i,
+  );
+  return match?.[1] || null;
+}
+
+export function extractBitlyUrl(text) {
+  const match = String(text || "").match(/https?:\/\/bit\.ly\/[A-Za-z0-9]+/i);
+  return match?.[0] || null;
+}
+
+export function isWpInstagramShare(markdown) {
+  return /from Instagram:/i.test(String(markdown));
+}
+
+export async function collectInstagramPostIndex(postsDir) {
+  const byId = new Map();
   const files = await listMarkdownFiles(postsDir);
   for (const file of files) {
     const text = await readFile(file, "utf8");
     const id = parseInstagramIdFromFrontmatter(text);
-    if (id) ids.add(id);
+    if (id) byId.set(id, { file, text });
   }
-  return ids;
+  return byId;
+}
+
+export async function collectExistingInstagramIds(postsDir) {
+  const index = await collectInstagramPostIndex(postsDir);
+  return new Set(index.keys());
+}
+
+export async function backfillMissingTagsForExisting({
+  item,
+  existing,
+  dryRun,
+}) {
+  if (!existing) return { updated: false };
+  if (parseFrontmatterTags(existing.text).length) return { updated: false };
+  const fromCaption = parseHashtags(item.caption);
+  const fromFile = parseHashtags(existing.text);
+  const merged = [];
+  const seen = new Set();
+  for (const tag of [...fromCaption, ...fromFile]) {
+    if (seen.has(tag)) continue;
+    seen.add(tag);
+    merged.push(tag);
+  }
+  if (!merged.length) return { updated: false };
+  const { markdown, changed } = insertFrontmatterTags(existing.text, merged);
+  if (!changed) return { updated: false };
+  if (!dryRun) await writeFile(existing.file, markdown, "utf8");
+  return { updated: true, path: existing.file, tags: merged, instagramId: item.id };
 }
 
 async function listMarkdownFiles(dir) {
@@ -406,7 +502,7 @@ async function maybeLoadDotEnv() {
   }
 }
 
-export function formatReport({ username, fetched, skipped, created, stubbed, errors, dryRun }) {
+export function formatReport({ username, fetched, skipped, created, stubbed, backfilled = [], errors, dryRun }) {
   const lines = [
     "## Instagram → Astro draft sync",
     "",
@@ -416,6 +512,7 @@ export function formatReport({ username, fetched, skipped, created, stubbed, err
     `- Fetched: ${fetched}`,
     `- Skipped (already imported): ${skipped}`,
     `- New drafts: ${created.length}`,
+    `- Tag backfills: ${backfilled.length}`,
     `- Stubs (video/reel or missing media): ${stubbed.length}`,
     `- Dry run: ${dryRun ? "yes" : "no"}`,
     "",
@@ -548,9 +645,11 @@ export async function runSync({
     userId: user.id,
     maxPages,
   });
-  const existing = await collectExistingInstagramIds(postsDir);
+  const existingIndex = await collectInstagramPostIndex(postsDir);
+  const existing = new Set(existingIndex.keys());
   const created = [];
   const stubbed = [];
+  const backfilled = [];
   const errors = [];
   let skipped = 0;
 
@@ -559,6 +658,16 @@ export async function runSync({
     const id = String(item.id);
     if (existing.has(id)) {
       skipped += 1;
+      try {
+        const filled = await backfillMissingTagsForExisting({
+          item,
+          existing: existingIndex.get(id),
+          dryRun,
+        });
+        if (filled.updated) backfilled.push(filled);
+      } catch (error) {
+        errors.push(`${id}: tag backfill failed: ${error.message}`);
+      }
       continue;
     }
     try {
@@ -587,6 +696,7 @@ export async function runSync({
     skipped,
     created,
     stubbed,
+    backfilled,
     errors,
     dryRun,
   };

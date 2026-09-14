@@ -1,8 +1,10 @@
 ---
 title: "Throwback burgers"
 pubDate: 2015-02-06
+source: instagram
+instagramPermalink: "https://www.instagram.com/p/yvsYmsTSpG/"
 ---
 
 ![](/wp-content/uploads/2015/02/66df4-10950452_839638859412368_1116595874_n.jpg)
 
-from Instagram: http://bit.ly/1yP2iko
+Originally posted on [Instagram](https://www.instagram.com/p/yvsYmsTSpG/).

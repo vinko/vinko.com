@@ -1,14 +1,48 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, render } from "astro:content";
-import { formatDate, publishedPosts } from "../../lib/posts";
+import {
+  formatDate,
+  isInstagramPost,
+  publishedPosts,
+  socialPostHref,
+} from "../../lib/posts";
+import { withBase } from "../../lib/url";
+import duplicateRedirects from "../../data/instagram-duplicate-redirects.json";
 
 export async function getStaticPaths() {
-  const posts = publishedPosts(await getCollection("posts"));
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+  const all = await getCollection("posts");
+  const blog = publishedPosts(all).map((post) => ({
+    params: { slug: post.id },
+    props: { post, redirectTo: null as string | null },
+  }));
+  const moved = all
+    .filter(isInstagramPost)
+    .filter((post) => !post.id.startsWith("instagram-"))
+    .map((post) => ({
+      params: { slug: post.id },
+      props: { post, redirectTo: socialPostHref(post) },
+    }));
+  const existing = new Set(all.map((post) => post.id));
+  const dupes = Object.entries(duplicateRedirects)
+    .filter(([from]) => !existing.has(from))
+    .map(([from, to]) => ({
+      params: { slug: from },
+      props: {
+        post: undefined,
+        redirectTo: withBase(`/social-network/${to}/`),
+      },
+    }));
+  return [...blog, ...moved, ...dupes];
 }
 
-const { post } = Astro.props;
+const { post, redirectTo } = Astro.props;
+if (redirectTo) {
+  return Astro.redirect(encodeURI(redirectTo), 301);
+}
+if (!post) {
+  return Astro.redirect(withBase("/blog/"), 302);
+}
 const { Content } = await render(post);
 ---
 <BaseLayout title={post.data.title} description={post.data.description || post.data.title}>

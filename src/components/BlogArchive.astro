@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PostCard from "./PostCard.astro";
+import TagList from "./TagList.astro";
 import YearNav from "./YearNav.astro";
 import Pager from "./Pager.astro";
 import type { Post } from "../lib/posts";
@@ -20,6 +21,8 @@ interface Props {
   yearBase?: string;
   postBase?: string;
   pagerLabel?: string;
+  showTags?: boolean;
+  currentTag?: string;
 }
 
 const {
@@ -36,6 +39,8 @@ const {
   yearBase = withBase("/blog/"),
   postBase = withBase("/blog/"),
   pagerLabel,
+  showTags = false,
+  currentTag,
 } = Astro.props;
 ---
 <BaseLayout title={title} description={description}>
@@ -44,10 +49,17 @@ const {
       <h1>{heading}</h1>
       <p class="lead">{lead}</p>
     </header>
-    <YearNav years={years} current={currentYear} base={yearBase} />
+    {currentTag ? (
+      <nav class="tag-filter" aria-label="Tag filter">
+        <a class="tag-filter-all" href={postBase}>All posts</a>
+        <TagList tags={[currentTag]} current={currentTag} />
+      </nav>
+    ) : (
+      years.length > 0 && <YearNav years={years} current={currentYear} base={yearBase} />
+    )}
     <ul class="post-grid">
       {posts.map((post) => (
-        <PostCard post={post} href={`${postBase}${post.id}/`} />
+        <PostCard post={post} href={`${postBase}${post.id}/`} showTags={showTags} />
       ))}
     </ul>
     <Pager base={pagerBase} current={page} last={lastPage} label={pagerLabel} />

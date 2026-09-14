@@ -14,7 +14,7 @@ const archiveBase = withBase("/social-network/");
   title="Social Network"
   description="Instagram posts — Vinko’s Thoughts On… at vinko.com"
   heading="Social Network"
-  lead={`Instagram posts, including unpublished drafts for preview. ${all.length.toLocaleString("en-US")} entries, newest first.`}
+  lead={`Instagram posts from @vinko — historical shares plus unpublished drafts for preview. ${all.length.toLocaleString("en-US")} entries, newest first.`}
   posts={posts}
   years={years}
   currentYear="all"
@@ -24,4 +24,5 @@ const archiveBase = withBase("/social-network/");
   yearBase={archiveBase}
   postBase={archiveBase}
   pagerLabel="Social Network pages"
+  showTags
 />

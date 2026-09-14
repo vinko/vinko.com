@@ -1,5 +1,6 @@
 ---
-import { firstImage, formatDate } from "../lib/posts";
+import TagList from "./TagList.astro";
+import { firstImage, formatDate, postTags } from "../lib/posts";
 import type { Post } from "../lib/posts";
 import { withBase } from "../lib/url";
 
@@ -7,14 +8,16 @@ interface Props {
   post: Post;
   heading?: "h2" | "h3";
   href?: string;
+  showTags?: boolean;
 }
 
-const { post, heading = "h2", href = withBase(`/blog/${post.id}/`) } = Astro.props;
+const { post, heading = "h2", href = withBase(`/blog/${post.id}/`), showTags = false } = Astro.props;
 const image = firstImage(post.body);
 const Heading = heading;
+const tags = showTags ? postTags(post) : [];
 ---
 <li class="post-card">
-  <a href={href}>
+  <a class="post-card-link" href={href}>
     {image ? (
       <div class="card-media">
         <img src={image.src} alt="" width="640" height="400" />
@@ -32,4 +35,9 @@ const Heading = heading;
       {post.data.description && <p>{post.data.description}</p>}
     </div>
   </a>
+  {tags.length > 0 && (
+    <div class="card-tags">
+      <TagList tags={tags} compact />
+    </div>
+  )}
 </li>

@@ -4,6 +4,7 @@ import PostCard from "./PostCard.astro";
 import YearNav from "./YearNav.astro";
 import Pager from "./Pager.astro";
 import type { Post } from "../lib/posts";
+import { withBase } from "../lib/url";
 
 interface Props {
   title: string;
@@ -15,6 +16,10 @@ interface Props {
   page: number;
   lastPage: number;
   pagerBase: string;
+  heading?: string;
+  yearBase?: string;
+  postBase?: string;
+  pagerLabel?: string;
 }
 
 const {
@@ -27,18 +32,24 @@ const {
   page,
   lastPage,
   pagerBase,
+  heading = "Blog",
+  yearBase = withBase("/blog/"),
+  postBase = withBase("/blog/"),
+  pagerLabel,
 } = Astro.props;
 ---
 <BaseLayout title={title} description={description}>
   <section class="page-shell">
     <header class="page-header">
-      <h1>Blog</h1>
+      <h1>{heading}</h1>
       <p class="lead">{lead}</p>
     </header>
-    <YearNav years={years} current={currentYear} />
+    <YearNav years={years} current={currentYear} base={yearBase} />
     <ul class="post-grid">
-      {posts.map((post) => <PostCard post={post} />)}
+      {posts.map((post) => (
+        <PostCard post={post} href={`${postBase}${post.id}/`} />
+      ))}
     </ul>
-    <Pager base={pagerBase} current={page} last={lastPage} />
+    <Pager base={pagerBase} current={page} last={lastPage} label={pagerLabel} />
   </section>
 </BaseLayout>

@@ -1,0 +1,36 @@
+---
+import BlogArchive from "../../../components/BlogArchive.astro";
+import { getCollection } from "astro:content";
+import { PAGE_SIZE, instagramPosts, postYears } from "../../../lib/posts";
+import { withBase } from "../../../lib/url";
+
+export async function getStaticPaths() {
+  const all = instagramPosts(await getCollection("posts"));
+  const lastPage = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+  return Array.from({ length: Math.max(0, lastPage - 1) }, (_, i) => ({
+    params: { page: String(i + 2) },
+  }));
+}
+
+const all = instagramPosts(await getCollection("posts"));
+const years = postYears(all);
+const lastPage = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+const page = Number(Astro.params.page);
+const posts = all.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+const archiveBase = withBase("/social-network/");
+---
+<BlogArchive
+  title={`Social Network · page ${page}`}
+  description="Instagram posts — Vinko’s Thoughts On… at vinko.com"
+  heading="Social Network"
+  lead={`Instagram posts, including unpublished drafts for preview. ${all.length.toLocaleString("en-US")} entries, newest first.`}
+  posts={posts}
+  years={years}
+  currentYear="all"
+  page={page}
+  lastPage={lastPage}
+  pagerBase={archiveBase}
+  yearBase={archiveBase}
+  postBase={archiveBase}
+  pagerLabel="Social Network pages"
+/>

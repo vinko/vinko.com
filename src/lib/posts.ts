@@ -12,6 +12,17 @@ export function publishedPosts(posts: Post[]): Post[] {
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }
 
+/** Instagram-sourced posts, including drafts (Social Network preview only). */
+export function isInstagramPost(post: Post): boolean {
+  return post.data.source === "instagram" || Boolean(post.data.instagramId);
+}
+
+export function instagramPosts(posts: Post[]): Post[] {
+  return posts
+    .filter(isInstagramPost)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+}
+
 export function firstImage(body: string | undefined): { src: string; alt: string } | undefined {
   if (!body) return undefined;
   const md = body.match(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/);

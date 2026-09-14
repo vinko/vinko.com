@@ -1,0 +1,35 @@
+---
+import BlogArchive from "../../../../components/BlogArchive.astro";
+import { getCollection } from "astro:content";
+import { PAGE_SIZE, instagramPosts, postYears } from "../../../../lib/posts";
+import { withBase } from "../../../../lib/url";
+
+export async function getStaticPaths() {
+  const all = instagramPosts(await getCollection("posts"));
+  const years = postYears(all);
+  return years.map((year) => ({ params: { year: String(year) } }));
+}
+
+const year = Number(Astro.params.year);
+const all = instagramPosts(await getCollection("posts"));
+const years = postYears(all);
+const yearPosts = all.filter((p) => p.data.pubDate.getUTCFullYear() === year);
+const lastPage = Math.max(1, Math.ceil(yearPosts.length / PAGE_SIZE));
+const posts = yearPosts.slice(0, PAGE_SIZE);
+const archiveBase = withBase("/social-network/");
+---
+<BlogArchive
+  title={`Social Network · ${year}`}
+  description={`Instagram posts from ${year} — Vinko’s Thoughts On… at vinko.com`}
+  heading="Social Network"
+  lead={`${yearPosts.length.toLocaleString("en-US")} Instagram posts from ${year}, newest first.`}
+  posts={posts}
+  years={years}
+  currentYear={year}
+  page={1}
+  lastPage={lastPage}
+  pagerBase={withBase(`/social-network/year/${year}/`)}
+  yearBase={archiveBase}
+  postBase={archiveBase}
+  pagerLabel="Social Network pages"
+/>

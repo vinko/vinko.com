@@ -1,11 +1,33 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, render } from "astro:content";
-import { formatDate, publishedPosts } from "../../lib/posts";
+import {
+  formatDate,
+  isInstagramPost,
+  publishedPosts,
+  socialPostHref,
+} from "../../lib/posts";
+import { withBase } from "../../lib/url";
+import duplicateRedirects from "../../data/instagram-duplicate-redirects.json";
 
 export async function getStaticPaths() {
-  const posts = publishedPosts(await getCollection("posts"));
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+  const all = await getCollection("posts");
+  const blog = publishedPosts(all).map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+  const moved = all
+    .filter(isInstagramPost)
+    .filter((post) => !post.id.startsWith("instagram-"))
+    .map((post) => ({
+      params: { slug: post.id },
+      redirect: socialPostHref(post),
+    }));
+  const dupes = Object.entries(duplicateRedirects).map(([from, to]) => ({
+    params: { slug: from },
+    redirect: withBase(`/social-network/${to}/`),
+  }));
+  return [...blog, ...moved, ...dupes];
 }
 
 const { post } = Astro.props;

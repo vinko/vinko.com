@@ -1,19 +1,37 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import TagList from "../../components/TagList.astro";
 import { getCollection, render } from "astro:content";
-import { formatDate, instagramPosts } from "../../lib/posts";
+import {
+  formatDate,
+  instagramNeighbors,
+  instagramPosts,
+  postTags,
+  relatedInstagramPosts,
+  socialPostHref,
+} from "../../lib/posts";
+import { withBase } from "../../lib/url";
 
 export async function getStaticPaths() {
-  const posts = instagramPosts(await getCollection("posts"));
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+  const all = await getCollection("posts");
+  const posts = instagramPosts(all);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post, all } }));
 }
 
-const { post } = Astro.props;
+const { post, all } = Astro.props;
 const { Content } = await render(post);
+const tags = postTags(post);
+const { previous, next } = instagramNeighbors(all, post);
+const related = relatedInstagramPosts(all, post, 3);
+const listingHref = withBase("/social-network/");
 ---
 <BaseLayout title={post.data.title} description={post.data.description || post.data.title}>
   <article>
     <header class="page-shell page-shell--narrow post-header">
+      <p class="post-kicker">
+        <a href={listingHref}>Social Network</a>
+      </p>
       <h1>{post.data.title}</h1>
       <time class="post-meta" datetime={post.data.pubDate.toISOString()}>
         {formatDate(post.data.pubDate)}
@@ -21,9 +39,50 @@ const { Content } = await render(post);
       {post.data.updatedDate && (
         <p class="post-meta">Updated {formatDate(post.data.updatedDate)}</p>
       )}
+      {tags.length > 0 && (
+        <div class="post-tags">
+          <TagList tags={tags} />
+        </div>
+      )}
     </header>
     <div class="page-shell page-shell--narrow prose prose--article">
       <Content />
     </div>
   </article>
+
+  <section class="page-shell page-shell--narrow post-footer" aria-label="More from Social Network">
+    <nav class="post-step" aria-label="Previous and next Instagram posts">
+      {previous ? (
+        <a class="post-step-link" href={socialPostHref(previous)}>
+          <span class="post-step-dir">Previous</span>
+          <span class="post-step-title">{previous.data.title}</span>
+        </a>
+      ) : (
+        <span class="post-step-link post-step-link--empty" aria-hidden="true"></span>
+      )}
+      {next ? (
+        <a class="post-step-link post-step-link--next" href={socialPostHref(next)}>
+          <span class="post-step-dir">Next</span>
+          <span class="post-step-title">{next.data.title}</span>
+        </a>
+      ) : (
+        <span class="post-step-link post-step-link--empty" aria-hidden="true"></span>
+      )}
+    </nav>
+
+    {related.length > 0 && (
+      <div class="related-block">
+        <h2 class="section-heading">More like this</h2>
+        <ul class="post-grid post-grid--related">
+          {related.map((item) => (
+            <PostCard post={item} href={socialPostHref(item)} heading="h3" showTags />
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <p class="post-back">
+      <a href={listingHref}>More from Social Network</a>
+    </p>
+  </section>
 </BaseLayout>

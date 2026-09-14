@@ -71,7 +71,7 @@ instagramPermalink: "https://www.instagram.com/p/…"
 ---
 ```
 
-`draft: true` is always set by the importer. Blog listings and post URLs omit drafts, so merging the PR without flipping the flag still keeps them off the GitHub Pages preview.
+`draft: true` is always set by the importer. **Blog** listings and `/blog/[slug]/` omit drafts *and* any post with `source: instagram`. Instagram shares (new drafts and historical WordPress imports) live on **Social Network** (`/social-network/`), including drafts.
 
 Review the PR diff (Markdown + images). Locally you can also inspect the files on the `instagram-drafts` branch.
 

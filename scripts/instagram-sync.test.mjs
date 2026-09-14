@@ -14,6 +14,9 @@ import {
   formatReport,
   graphUrl,
   missingTokenMessage,
+  insertFrontmatterTags,
+  instagramShortcodeFromUrl,
+  isWpInstagramShare,
   parseArgs,
   parseHashtags,
   parseInstagramIdFromFrontmatter,
@@ -229,6 +232,11 @@ describe("idempotency", () => {
     assert.equal(result.created[0].instagramId, "bbb");
     assert.deepEqual(downloads, ["https://example.com/new.jpg"]);
 
+    const keepMarkdown = await readFile(join(postsDir, "instagram-keep.md"), "utf8");
+    assert.match(keepMarkdown, /instagramId: "aaa"/);
+    assert.match(keepMarkdown, /tags:\n {2}- "food"/);
+    assert.doesNotMatch(keepMarkdown, /draft:\s*false/);
+
     const markdown = await readFile(join(postsDir, "instagram-bbb.md"), "utf8");
     assert.match(markdown, /^draft: true$/m);
     assert.match(markdown, /tags:\n {2}- "travel"\n {2}- "food"/);
@@ -314,6 +322,34 @@ describe("cli helpers", () => {
     });
     assert.match(report, /src\/content\/posts\/instagram-1\.md/);
     assert.match(report, /draft: true/);
+    assert.match(report, /Tag backfills: 0/);
     assert.match(report, /www\.vinko\.com is \*\*not\*\* updated/);
+  });
+});
+
+describe("tag backfill helpers", () => {
+  it("inserts tags after draft without flipping it", () => {
+    const source = `---\ntitle: "Hello"\npubDate: 2026-09-14\ndraft: true\nsource: instagram\ninstagramId: "1"\n---\n\n#Food in the body\n`;
+    const { markdown, changed } = insertFrontmatterTags(source, ["food", "macau"]);
+    assert.equal(changed, true);
+    assert.match(markdown, /^draft: true$/m);
+    assert.doesNotMatch(markdown, /draft:\s*false/);
+    assert.match(markdown, /tags:\n {2}- "food"\n {2}- "macau"/);
+  });
+
+  it("does not overwrite existing tags", () => {
+    const source = `---\ntitle: "Hello"\ntags:\n  - "keep"\n---\n\n#food\n`;
+    const { markdown, changed } = insertFrontmatterTags(source, ["food"]);
+    assert.equal(changed, false);
+    assert.equal(markdown, source);
+  });
+
+  it("parses Instagram shortcodes", () => {
+    assert.equal(
+      instagramShortcodeFromUrl("https://www.instagram.com/p/BOsCiueF5cG/"),
+      "BOsCiueF5cG",
+    );
+    assert.equal(isWpInstagramShare("from Instagram: http://bit.ly/2hWxOMg"), true);
+    assert.equal(isWpInstagramShare("A blog post about Texas BBQ"), false);
   });
 });

@@ -6,9 +6,10 @@ export type Post = CollectionEntry<"posts">;
 /** Image-card grid: 6 rows × 3 columns on desktop. */
 export const PAGE_SIZE = 18;
 
+/** Public blog posts: omit drafts and anything sourced from Instagram. */
 export function publishedPosts(posts: Post[]): Post[] {
   return posts
-    .filter((p) => !p.data.draft)
+    .filter((p) => !p.data.draft && !isInstagramPost(p))
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }
 
@@ -21,6 +22,73 @@ export function instagramPosts(posts: Post[]): Post[] {
   return posts
     .filter(isInstagramPost)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+}
+
+export function postTags(post: Post): string[] {
+  const seen = new Set<string>();
+  const tags: string[] = [];
+  for (const raw of post.data.tags ?? []) {
+    const tag = String(raw).trim();
+    if (!tag) continue;
+    const key = tag.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    tags.push(tag);
+  }
+  return tags;
+}
+
+export function socialPostHref(post: Post): string {
+  return withBase(`/social-network/${post.id}/`);
+}
+
+export function socialTagHref(tag: string): string {
+  return withBase(`/social-network/tag/${encodeURIComponent(tag)}/`);
+}
+
+export function instagramPostsByTag(posts: Post[], tag: string): Post[] {
+  const needle = tag.trim().toLowerCase();
+  if (!needle) return [];
+  return instagramPosts(posts).filter((post) =>
+    postTags(post).some((item) => item.toLowerCase() === needle),
+  );
+}
+
+export function instagramTagList(posts: Post[]): string[] {
+  const seen = new Set<string>();
+  const tags: string[] = [];
+  for (const post of instagramPosts(posts)) {
+    for (const tag of postTags(post)) {
+      const key = tag.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      tags.push(tag);
+    }
+  }
+  return tags.sort((a, b) => a.localeCompare(b, "en", { sensitivity: "base" }));
+}
+
+/** Previous = older, Next = newer, among Instagram posts (including drafts). */
+export function instagramNeighbors(
+  posts: Post[],
+  current: Post,
+): { previous?: Post; next?: Post } {
+  const list = instagramPosts(posts);
+  const index = list.findIndex((post) => post.id === current.id);
+  if (index < 0) return {};
+  return {
+    previous: list[index + 1],
+    next: list[index - 1],
+  };
+}
+
+export function relatedInstagramPosts(posts: Post[], current: Post, limit = 3): Post[] {
+  const tags = new Set(postTags(current).map((tag) => tag.toLowerCase()));
+  if (!tags.size) return [];
+  return instagramPosts(posts)
+    .filter((post) => post.id !== current.id)
+    .filter((post) => postTags(post).some((tag) => tags.has(tag.toLowerCase())))
+    .slice(0, limit);
 }
 
 export function firstImage(body: string | undefined): { src: string; alt: string } | undefined {

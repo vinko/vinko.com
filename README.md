@@ -37,6 +37,9 @@ Static rebuild at the **repository root**. The Version 1 WordPress tree is kept 
 | `/contact/` | `src/pages/contact.astro` |
 | `/blog/` | `src/pages/blog/index.astro` |
 | `/blog/[slug]/` | `src/pages/blog/[slug].astro` |
+| `/social-network/` | `src/pages/social-network/index.astro` |
+| `/social-network/[slug]/` | `src/pages/social-network/[slug].astro` |
+| `/social-network/tag/[tag]/` | `src/pages/social-network/tag/[tag]/index.astro` |
 
 Migrated posts live in `src/content/posts/` (Astro content collection). Photos used by those posts are served from `public/wp-content/uploads/` (copied from the Version 1 archive). Markdown image URLs are local (`/wp-content/uploads/...`), not hotlinks to www.vinko.com.
 
@@ -69,7 +72,9 @@ If the preview 404s or the workflow cannot enable Pages: the repo is private. Gi
 
 A scheduled Action can fetch **@vinko** Instagram Business/Creator posts and write Markdown **drafts** (`draft: true`) on the `instagram-drafts` branch, then open or update a PR. Tags come from caption hashtags as-is. Images are stored under `public/instagram/{id}/`.
 
-This does **not** publish to the blog, GitHub Pages, or www.vinko.com. After Vinko OK, set `draft: false` on approved posts and merge. Required secret: `INSTAGRAM_ACCESS_TOKEN` (optional `INSTAGRAM_USER_ID`). Full setup: [docs/instagram-sync.md](docs/instagram-sync.md).
+Instagram-sourced posts (including historical WordPress shares and unpublished drafts) are listed on **Social Network** (`/social-network/`). The main blog still uses `publishedPosts()` and omits drafts *and* `source: instagram`.
+
+This does **not** publish to www.vinko.com or ICDSoft. After Vinko OK, set `draft: false` only if a post should leave draft state — it still will not appear on the main blog while `source: instagram` is set. Required secret: `INSTAGRAM_ACCESS_TOKEN` (optional `INSTAGRAM_USER_ID`). Full setup: [docs/instagram-sync.md](docs/instagram-sync.md).
 
 ### Important — no live deploy without confirmation
 

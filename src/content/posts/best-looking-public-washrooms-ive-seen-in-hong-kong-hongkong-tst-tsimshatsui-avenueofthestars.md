@@ -1,5 +1,6 @@
 ---
-title: "Best looking public washrooms I’ve seen in Hong Kong #hongkong #tst #tsimshatsui #avenueofthestars"
+title: "Best looking public washrooms I’ve seen in Hong Kong"
+description: "Best looking public washrooms I’ve seen in Hong Kong"
 pubDate: 2019-02-14
 tags:
   - "hongkong"
@@ -10,6 +11,8 @@ source: instagram
 instagramPermalink: "https://www.instagram.com/p/Bt22fU4ANP4/"
 ---
 
-![](/wp-content/uploads/2019/02/3d656-51752543_401249230440737_6144842995475821901_n.jpg)
+![Best looking public washrooms I’ve seen in Hong Kong](/wp-content/uploads/2019/02/3d656-51752543_401249230440737_6144842995475821901_n.jpg)
+
+Best looking public washrooms I’ve seen in Hong Kong
 
 Originally posted on [Instagram](https://www.instagram.com/p/Bt22fU4ANP4/).

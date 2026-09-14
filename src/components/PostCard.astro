@@ -37,7 +37,8 @@ const tags = showTags ? postTags(post) : [];
   </a>
   {tags.length > 0 && (
     <div class="card-tags">
-      <TagList tags={tags} compact />
+      <p class="card-tags-label">Tags</p>
+      <TagList tags={tags} />
     </div>
   )}
 </li>

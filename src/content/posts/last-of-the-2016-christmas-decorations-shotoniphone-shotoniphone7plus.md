@@ -1,5 +1,6 @@
 ---
-title: "Last of the 2016 #Christmas decorations #shotoniphone #shotoniphone7plus"
+title: "Last of the 2016 Christmas decorations"
+description: "Last of the 2016 Christmas decorations"
 pubDate: 2017-01-02
 tags:
   - "christmas"
@@ -9,6 +10,8 @@ source: instagram
 instagramPermalink: "https://www.instagram.com/p/BOwpiGQlKIC/"
 ---
 
-![](/wp-content/uploads/2017/01/ebe96-15624179_720445461451468_8396338932542865408_n.jpg)
+![Last of the 2016 Christmas decorations](/wp-content/uploads/2017/01/ebe96-15624179_720445461451468_8396338932542865408_n.jpg)
+
+Last of the 2016 Christmas decorations
 
 Originally posted on [Instagram](https://www.instagram.com/p/BOwpiGQlKIC/).

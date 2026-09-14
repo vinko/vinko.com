@@ -68,6 +68,36 @@ export function instagramTagList(posts: Post[]): string[] {
   return tags.sort((a, b) => a.localeCompare(b, "en", { sensitivity: "base" }));
 }
 
+export function instagramTagCounts(posts: Post[]): { tag: string; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const post of instagramPosts(posts)) {
+    for (const tag of postTags(post)) {
+      counts.set(tag, (counts.get(tag) || 0) + 1);
+    }
+  }
+  return [...counts.entries()]
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag, "en", { sensitivity: "base" }));
+}
+
+/** Most-used tags for the Social Network browse row. */
+export function instagramPopularTags(posts: Post[], limit = 24, extra?: string): string[] {
+  const tags = instagramTagCounts(posts).map((item) => item.tag);
+  const out: string[] = [];
+  const seen = new Set<string>();
+  if (extra?.trim()) {
+    out.push(extra.trim());
+    seen.add(extra.trim().toLowerCase());
+  }
+  for (const tag of tags) {
+    if (seen.has(tag.toLowerCase())) continue;
+    out.push(tag);
+    seen.add(tag.toLowerCase());
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
 /** Previous = older, Next = newer, among Instagram posts (including drafts). */
 export function instagramNeighbors(
   posts: Post[],

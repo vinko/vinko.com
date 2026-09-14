@@ -1,7 +1,7 @@
 ---
 import BlogArchive from "../../components/BlogArchive.astro";
 import { getCollection } from "astro:content";
-import { PAGE_SIZE, instagramPosts, postYears } from "../../lib/posts";
+import { PAGE_SIZE, instagramPopularTags, instagramPosts, postYears } from "../../lib/posts";
 import { withBase } from "../../lib/url";
 
 const all = instagramPosts(await getCollection("posts"));
@@ -9,6 +9,7 @@ const years = postYears(all);
 const lastPage = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
 const posts = all.slice(0, PAGE_SIZE);
 const archiveBase = withBase("/social-network/");
+const browseTags = instagramPopularTags(all, 24);
 ---
 <BlogArchive
   title="Social Network"
@@ -25,4 +26,5 @@ const archiveBase = withBase("/social-network/");
   postBase={archiveBase}
   pagerLabel="Social Network pages"
   showTags
+  browseTags={browseTags}
 />

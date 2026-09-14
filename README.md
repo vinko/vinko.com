@@ -65,6 +65,12 @@ This does **not** deploy to www.vinko.com, hosting.vinko.com, or ICDSoft `public
 
 If the preview 404s or the workflow cannot enable Pages: the repo is private. GitHub Pages for a private repository needs GitHub Pro (or a public repo). In Settings → Pages, set Source to **GitHub Actions** (the workflow tries to do this automatically).
 
+### Instagram drafts (Ask-First)
+
+A scheduled Action can fetch **@vinko** Instagram Business/Creator posts and write Markdown **drafts** (`draft: true`) on the `instagram-drafts` branch, then open or update a PR. Tags come from caption hashtags as-is. Images are stored under `public/instagram/{id}/`.
+
+This does **not** publish to the blog, GitHub Pages, or www.vinko.com. After Vinko OK, set `draft: false` on approved posts and merge. Required secret: `INSTAGRAM_ACCESS_TOKEN` (optional `INSTAGRAM_USER_ID`). Full setup: [docs/instagram-sync.md](docs/instagram-sync.md).
+
 ### Important — no live deploy without confirmation
 
 **Do not deploy this site to ICDSoft / the live vinko.com (or hosting.vinko.com) without explicit confirmation.**
@@ -76,7 +82,9 @@ This branch is for local development, review, repository work, and the GitHub Pa
 ## Tree
 
 ```
-.github/workflows/   # GitHub Pages preview (not live vinko.com)
+.github/workflows/   # GitHub Pages preview + Instagram draft sync (not live vinko.com)
+docs/                # including Instagram Ask-First sync notes
+scripts/             # Instagram sync (and WordPress migrate helpers)
 wordpress/           # Version 1 WordPress public mirror (do not delete)
 src/                 # Version 2 Astro source
 public/              # Version 2 static assets, including wp-content/uploads photos

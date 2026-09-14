@@ -9,6 +9,10 @@ const posts = defineCollection({
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     draft: z.boolean().optional().default(false),
+    tags: z.array(z.string()).optional(),
+    instagramId: z.string().optional(),
+    instagramPermalink: z.string().url().optional(),
+    source: z.enum(["instagram"]).optional(),
   }),
 });
 

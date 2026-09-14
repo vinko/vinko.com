@@ -8,7 +8,9 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "instagram-sync": "node scripts/instagram-sync.mjs",
+    "test": "node --test scripts/instagram-sync.test.mjs"
   },
   "dependencies": {
     "astro": "^5.13.0"

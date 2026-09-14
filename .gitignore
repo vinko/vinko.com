@@ -6,3 +6,4 @@ dist/
 .idea/
 .vscode/
 scripts/wp-migrate-report.json
+instagram-sync-report.md

@@ -15,9 +15,9 @@ const { years, current = "all", base = withBase("/blog/") } = Astro.props;
   Do not omit these links or generate them only after JS.
 */}
 <details class="year-filter">
-  <summary class="tag-reveal-btn year-filter-summary">
-    <span class="year-filter-label year-filter-label--closed">Show years</span>
-    <span class="year-filter-label year-filter-label--open">Hide years</span>
+  <summary class="tag-reveal-btn filter-disclosure-summary">
+    <span class="filter-disclosure-label filter-disclosure-label--closed">Show years</span>
+    <span class="filter-disclosure-label filter-disclosure-label--open">Hide years</span>
   </summary>
   <nav class="year-nav" aria-label="Filter posts by year">
     <a href={base} aria-current={current === "all" ? "page" : undefined}>All</a>

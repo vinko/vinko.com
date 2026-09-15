@@ -860,11 +860,44 @@ a:hover {
 }
 
 /* Year chips + pager — same Light Continuum pills as nav/buttons */
+.year-filter {
+  margin: 0 0 0.75rem;
+}
+
+.listing-tools > .year-filter:last-child {
+  margin-bottom: 0;
+}
+
+.year-filter-summary {
+  list-style: none;
+}
+
+.year-filter-summary::-webkit-details-marker {
+  display: none;
+}
+
+.year-filter-label--open {
+  display: none;
+}
+
+.year-filter[open] .year-filter-label--closed {
+  display: none;
+}
+
+.year-filter[open] .year-filter-label--open {
+  display: inline;
+}
+
+.year-filter[open] .year-filter-summary {
+  color: var(--accent);
+  border-color: rgba(0, 113, 227, 0.35);
+}
+
 .year-nav {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin: 0 0 1.75rem;
+  margin: 0.75rem 0 0;
 }
 
 .year-nav a {

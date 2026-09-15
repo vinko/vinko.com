@@ -10,11 +10,21 @@ interface Props {
 
 const { years, current = "all", base = withBase("/blog/") } = Astro.props;
 ---
-<nav class="year-nav" aria-label="Filter posts by year">
-  <a href={base} aria-current={current === "all" ? "page" : undefined}>All</a>
-  {years.map((year) => (
-    <a href={`${base}year/${year}/`} aria-current={current === year ? "page" : undefined}>
-      {year}
-    </a>
-  ))}
-</nav>
+{/*
+  Closed <details> keeps every year <a href> in the HTML for crawlers.
+  Do not omit these links or generate them only after JS.
+*/}
+<details class="year-filter">
+  <summary class="tag-reveal-btn year-filter-summary">
+    <span class="year-filter-label year-filter-label--closed">Show years</span>
+    <span class="year-filter-label year-filter-label--open">Hide years</span>
+  </summary>
+  <nav class="year-nav" aria-label="Filter posts by year">
+    <a href={base} aria-current={current === "all" ? "page" : undefined}>All</a>
+    {years.map((year) => (
+      <a href={`${base}year/${year}/`} aria-current={current === year ? "page" : undefined}>
+        {year}
+      </a>
+    ))}
+  </nav>
+</details>

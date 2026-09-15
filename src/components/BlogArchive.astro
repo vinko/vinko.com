@@ -58,24 +58,26 @@ const canFilterTags = browseTags.length > 0;
       <h1>{heading}</h1>
       <p class="lead">{lead}</p>
     </header>
-    {years.length > 0 && <YearNav years={years} current={currentYear} base={yearBase} />}
-    {(canFilterTags || canRevealTags) && (
+    {(years.length > 0 || canFilterTags || canRevealTags) && (
       <div class="listing-tools">
-        <div class="listing-tools-row">
-          {canFilterTags && (
-            <div class="listing-tools-start">
-              <TagFilterToggle targetId={filterPanelId} />
-              {currentTag && (
-                <a class="tag-filter-clear" href={postBase}>All posts</a>
-              )}
-            </div>
-          )}
-          {canRevealTags && (
-            <div class="tag-reveal">
-              <TagRevealToggle targetId={gridId} />
-            </div>
-          )}
-        </div>
+        {years.length > 0 && <YearNav years={years} current={currentYear} base={yearBase} />}
+        {(canFilterTags || canRevealTags) && (
+          <div class="listing-tools-row">
+            {canFilterTags && (
+              <div class="listing-tools-start">
+                <TagFilterToggle targetId={filterPanelId} />
+                {currentTag && (
+                  <a class="tag-filter-clear" href={postBase}>All posts</a>
+                )}
+              </div>
+            )}
+            {canRevealTags && (
+              <div class="tag-reveal">
+                <TagRevealToggle targetId={gridId} />
+              </div>
+            )}
+          </div>
+        )}
         {canFilterTags && (
           <nav id={filterPanelId} class="tag-browser" aria-label="Browse tags" hidden>
             <div class="tag-browser-head">

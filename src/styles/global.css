@@ -394,9 +394,17 @@ a:hover {
 .listing-tools-row {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.5rem 1rem;
+}
+
+.tag-filter-disclosure {
+  display: contents;
+}
+
+.listing-tools-start .tag-browser {
+  flex: 1 0 100%;
 }
 
 .listing-tools-start {
@@ -860,11 +868,44 @@ a:hover {
 }
 
 /* Year chips + pager — same Light Continuum pills as nav/buttons */
+.year-filter {
+  margin: 0 0 0.75rem;
+}
+
+.listing-tools > .year-filter:last-child {
+  margin-bottom: 0;
+}
+
+.filter-disclosure-summary {
+  list-style: none;
+}
+
+.filter-disclosure-summary::-webkit-details-marker {
+  display: none;
+}
+
+.filter-disclosure-label--open {
+  display: none;
+}
+
+details[open] > .filter-disclosure-summary .filter-disclosure-label--closed {
+  display: none;
+}
+
+details[open] > .filter-disclosure-summary .filter-disclosure-label--open {
+  display: inline;
+}
+
+details[open] > .filter-disclosure-summary {
+  color: var(--accent);
+  border-color: rgba(0, 113, 227, 0.35);
+}
+
 .year-nav {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin: 0 0 1.75rem;
+  margin: 0.75rem 0 0;
 }
 
 .year-nav a {

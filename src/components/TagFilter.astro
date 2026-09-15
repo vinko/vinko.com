@@ -1,0 +1,50 @@
+---
+import TagList from "./TagList.astro";
+
+interface Props {
+  tags: string[];
+  current?: string;
+}
+
+const { tags, current } = Astro.props;
+---
+{/*
+  Closed <details> keeps every tag <a href> in the HTML for crawlers.
+  Session storage only remembers open/closed — it does not create the URLs.
+*/}
+<details class="tag-filter-disclosure" data-tag-filter-disclosure>
+  <summary class="tag-reveal-btn filter-disclosure-summary">
+    <span class="filter-disclosure-label filter-disclosure-label--closed">Show filters</span>
+    <span class="filter-disclosure-label filter-disclosure-label--open">Hide filters</span>
+  </summary>
+  <nav class="tag-browser" aria-label="Browse tags">
+    <div class="tag-browser-head">
+      <p class="tag-browser-label">Browse tags</p>
+      <span class="tag-browser-hint">
+        {current ? `Filtered by ${current}` : "Jump to a tag"}
+      </span>
+    </div>
+    <TagList tags={tags} current={current} />
+  </nav>
+</details>
+
+<script>
+  const STORAGE_KEY = "vinko-sn-filters-open";
+
+  document.querySelectorAll<HTMLDetailsElement>("[data-tag-filter-disclosure]").forEach((el) => {
+    if (el.dataset.bound === "true") return;
+    el.dataset.bound = "true";
+    try {
+      if (sessionStorage.getItem(STORAGE_KEY) === "1") el.open = true;
+    } catch {
+      /* private mode */
+    }
+    el.addEventListener("toggle", () => {
+      try {
+        sessionStorage.setItem(STORAGE_KEY, el.open ? "1" : "0");
+      } catch {
+        /* private mode */
+      }
+    });
+  });
+</script>

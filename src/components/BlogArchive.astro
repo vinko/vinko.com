@@ -1,8 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PostCard from "./PostCard.astro";
-import TagList from "./TagList.astro";
-import TagFilterToggle from "./TagFilterToggle.astro";
+import TagFilter from "./TagFilter.astro";
 import TagRevealToggle from "./TagRevealToggle.astro";
 import YearNav from "./YearNav.astro";
 import Pager from "./Pager.astro";
@@ -48,7 +47,6 @@ const {
   browseTags = [],
 } = Astro.props;
 const gridId = "archive-post-grid";
-const filterPanelId = "tag-browser-panel";
 const canRevealTags = showTags && posts.some((post) => postTags(post).length > 0);
 const canFilterTags = browseTags.length > 0;
 ---
@@ -58,34 +56,25 @@ const canFilterTags = browseTags.length > 0;
       <h1>{heading}</h1>
       <p class="lead">{lead}</p>
     </header>
-    {years.length > 0 && <YearNav years={years} current={currentYear} base={yearBase} />}
-    {(canFilterTags || canRevealTags) && (
+    {(years.length > 0 || canFilterTags || canRevealTags) && (
       <div class="listing-tools">
-        <div class="listing-tools-row">
-          {canFilterTags && (
-            <div class="listing-tools-start">
-              <TagFilterToggle targetId={filterPanelId} />
-              {currentTag && (
-                <a class="tag-filter-clear" href={postBase}>All posts</a>
-              )}
-            </div>
-          )}
-          {canRevealTags && (
-            <div class="tag-reveal">
-              <TagRevealToggle targetId={gridId} />
-            </div>
-          )}
-        </div>
-        {canFilterTags && (
-          <nav id={filterPanelId} class="tag-browser" aria-label="Browse tags" hidden>
-            <div class="tag-browser-head">
-              <p class="tag-browser-label">Browse tags</p>
-              <span class="tag-browser-hint">
-                {currentTag ? `Filtered by ${currentTag}` : "Jump to a tag"}
-              </span>
-            </div>
-            <TagList tags={browseTags} current={currentTag} />
-          </nav>
+        {years.length > 0 && <YearNav years={years} current={currentYear} base={yearBase} />}
+        {(canFilterTags || canRevealTags) && (
+          <div class="listing-tools-row">
+            {canFilterTags && (
+              <div class="listing-tools-start">
+                <TagFilter tags={browseTags} current={currentTag} />
+                {currentTag && (
+                  <a class="tag-filter-clear" href={postBase}>All posts</a>
+                )}
+              </div>
+            )}
+            {canRevealTags && (
+              <div class="tag-reveal">
+                <TagRevealToggle targetId={gridId} />
+              </div>
+            )}
+          </div>
         )}
       </div>
     )}

@@ -216,6 +216,17 @@ a:hover {
   color: #fff;
 }
 
+.btn--secondary {
+  background: transparent;
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1.5px rgba(0, 113, 227, 0.45);
+}
+
+.btn--secondary:hover {
+  background: rgba(0, 113, 227, 0.08);
+  color: var(--accent-hover);
+}
+
 .btn-row {
   display: flex;
   flex-wrap: wrap;
@@ -278,6 +289,71 @@ a:hover {
 
 .hero-copy .lead {
   max-width: 28rem;
+}
+
+.hero--compact {
+  min-height: min(42vh, 22rem);
+}
+
+.hero--compact .hero-copy {
+  padding: clamp(2.75rem, 7vw, 4.25rem) clamp(1.15rem, 4vw, 2rem) clamp(1.6rem, 4vw, 2.4rem);
+}
+
+.hero--compact .hero-copy h1 {
+  font-size: var(--step-3);
+  max-width: 16ch;
+}
+
+.hero-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  background: var(--elevated);
+  overflow: hidden;
+}
+
+.hero-split-photo {
+  display: block;
+  width: 100%;
+  height: min(42vh, 22rem);
+  object-fit: cover;
+  object-position: 50% 42%;
+  background: #d8dde3;
+}
+
+.hero-split-copy {
+  max-width: var(--wide);
+  margin: 0 auto;
+  padding: clamp(1.75rem, 4vw, 2.75rem) clamp(1.15rem, 4vw, 2rem) clamp(2rem, 4vw, 3rem);
+}
+
+.hero-split-copy h1 {
+  margin: 0;
+  max-width: 14ch;
+  font-size: var(--step-3);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+@media (min-width: 840px) {
+  .hero-split {
+    grid-template-columns: 1.05fr minmax(18rem, 1fr);
+    align-items: stretch;
+    min-height: min(62vh, 32rem);
+  }
+
+  .hero-split-photo {
+    height: 100%;
+    min-height: min(62vh, 32rem);
+  }
+
+  .hero-split-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    max-width: none;
+    padding: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 4vw, 2.5rem);
+  }
 }
 
 /* Image-first card grid: 1 → 2 → 3 columns */
@@ -865,6 +941,126 @@ a:hover {
   font-size: var(--step-2);
   font-weight: 600;
   letter-spacing: -0.03em;
+}
+
+.home-lane + .home-lane {
+  margin-top: clamp(2.5rem, 5vw, 3.75rem);
+}
+
+.lane-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1.25rem;
+  margin: 0 0 1.25rem;
+}
+
+.lane-head .section-heading {
+  margin: 0;
+}
+
+.lane-all {
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  min-height: var(--touch);
+  display: inline-flex;
+  align-items: center;
+}
+
+.post-grid--featured {
+  grid-template-columns: 1fr;
+}
+
+.post-grid--featured .card-media {
+  aspect-ratio: 16 / 8;
+}
+
+.post-grid--featured .card-body h2,
+.post-grid--featured .card-body h3 {
+  font-size: var(--step-2);
+  -webkit-line-clamp: 4;
+}
+
+.story-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.story-list li {
+  border-bottom: 1px solid var(--hairline);
+}
+
+.story-list a {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 9.5rem) 1fr;
+  gap: 0.85rem 1.25rem;
+  align-items: baseline;
+  min-height: var(--touch);
+  padding: 0.85rem 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.story-list a:hover span {
+  color: var(--accent);
+}
+
+.story-list time {
+  color: var(--muted);
+  font-size: 0.88rem;
+  letter-spacing: -0.01em;
+}
+
+.story-list span {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.place-links {
+  margin: 0;
+  max-width: 40rem;
+  color: var(--text);
+  font-size: var(--step-1);
+  line-height: 1.7;
+}
+
+.place-links a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  font-weight: 500;
+}
+
+.place-links a:hover {
+  color: var(--accent);
+}
+
+.home-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.35rem;
+  margin-top: clamp(2.5rem, 5vw, 3.75rem);
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--hairline);
+}
+
+.home-link-row a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.home-link-row a:hover {
+  color: var(--accent);
 }
 
 /* Year chips + pager — same Light Continuum pills as nav/buttons */

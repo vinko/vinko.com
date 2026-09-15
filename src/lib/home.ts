@@ -146,7 +146,7 @@ function titleKey(post: Post): string {
   return post.data.title.trim().toLowerCase();
 }
 
-/** Topic lanes for the Lanes desk home mock: latest matching published blog posts. */
+/** Topic lanes for Home (Lanes desk): latest matching published blog posts. */
 export function homeLanes(posts: Post[], limit = 3): HomeLane[] {
   const blog = publishedPosts(posts);
   const byLane: Record<HomeLaneId, Post[]> = { travel: [], food: [], ai: [] };

@@ -31,7 +31,9 @@ Static rebuild at the **repository root**. The Version 1 WordPress tree is kept 
 
 | Route | File |
 | --- | --- |
-| `/` | `src/pages/index.astro` |
+| `/` | `src/pages/index.astro` (Lanes desk: Travel / Food / AI + Instagram) |
+| `/home-lanes/` | Redirect stub to `/` (old preview links) |
+| `/home-shelf/` | Story shelf comparison mock |
 | `/about/` | `src/pages/about.astro` |
 | `/services/` | `src/pages/services.astro` |
 | `/contact/` | `src/pages/contact.astro` |

@@ -28,10 +28,10 @@ const years: number[] = [];
 const browseTags = instagramPopularTags(all, 24, tag);
 ---
 <BlogArchive
-  title={`#${tag} · Social Network`}
+  title={`${tag} · Social Network`}
   description={`Instagram posts tagged ${tag} — Vinko’s Thoughts On… at vinko.com`}
   heading="Social Network"
-  lead={`${count} Instagram ${tagged.length === 1 ? "post" : "posts"} tagged #${tag}.`}
+  lead={`${count} Instagram ${tagged.length === 1 ? "post" : "posts"} tagged ${tag}.`}
   posts={posts}
   years={years}
   currentYear="all"

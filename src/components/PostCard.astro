@@ -44,9 +44,9 @@ const tags = showTags ? postTags(post) : [];
     </div>
   </a>
   {tags.length > 0 && (
-    <div class="card-tags" hidden={tagsCollapsed}>
+    <nav class="card-tags" aria-label="Tags" hidden={tagsCollapsed}>
       <p class="card-tags-label">Tags</p>
-      <TagList tags={tags} />
-    </div>
+      <TagList tags={tags} compact />
+    </nav>
   )}
 </li>

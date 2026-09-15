@@ -38,6 +38,10 @@ export function postTags(post: Post): string[] {
   return tags;
 }
 
+export function blogPostHref(post: Post): string {
+  return withBase(`/blog/${post.id}/`);
+}
+
 export function socialPostHref(post: Post): string {
   return withBase(`/social-network/${post.id}/`);
 }
@@ -98,18 +102,33 @@ export function instagramPopularTags(posts: Post[], limit = 24, extra?: string):
   return out;
 }
 
-/** Previous = older, Next = newer, among Instagram posts (including drafts). */
-export function instagramNeighbors(
-  posts: Post[],
+/** Previous = older, Next = newer, in a newest-first list. */
+function chronologicalNeighbors(
+  list: Post[],
   current: Post,
 ): { previous?: Post; next?: Post } {
-  const list = instagramPosts(posts);
   const index = list.findIndex((post) => post.id === current.id);
   if (index < 0) return {};
   return {
     previous: list[index + 1],
     next: list[index - 1],
   };
+}
+
+/** Previous = older, Next = newer, among published blog posts (no Instagram). */
+export function blogNeighbors(
+  posts: Post[],
+  current: Post,
+): { previous?: Post; next?: Post } {
+  return chronologicalNeighbors(publishedPosts(posts), current);
+}
+
+/** Previous = older, Next = newer, among Instagram posts (including drafts). */
+export function instagramNeighbors(
+  posts: Post[],
+  current: Post,
+): { previous?: Post; next?: Post } {
+  return chronologicalNeighbors(instagramPosts(posts), current);
 }
 
 export function relatedInstagramPosts(posts: Post[], current: Post, limit = 3): Post[] {

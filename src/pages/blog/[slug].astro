@@ -1,7 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostStep from "../../components/PostStep.astro";
 import { getCollection, render } from "astro:content";
 import {
+  blogNeighbors,
+  blogPostHref,
   formatDate,
   isInstagramPost,
   publishedPosts,
@@ -14,14 +17,14 @@ export async function getStaticPaths() {
   const all = await getCollection("posts");
   const blog = publishedPosts(all).map((post) => ({
     params: { slug: post.id },
-    props: { post, redirectTo: null as string | null },
+    props: { post, all, redirectTo: null as string | null },
   }));
   const moved = all
     .filter(isInstagramPost)
     .filter((post) => !post.id.startsWith("instagram-"))
     .map((post) => ({
       params: { slug: post.id },
-      props: { post, redirectTo: socialPostHref(post) },
+      props: { post, all, redirectTo: socialPostHref(post) },
     }));
   const existing = new Set(all.map((post) => post.id));
   const dupes = Object.entries(duplicateRedirects)
@@ -30,13 +33,14 @@ export async function getStaticPaths() {
       params: { slug: from },
       props: {
         post: undefined,
+        all,
         redirectTo: withBase(`/social-network/${to}/`),
       },
     }));
   return [...blog, ...moved, ...dupes];
 }
 
-const { post, redirectTo } = Astro.props;
+const { post, all, redirectTo } = Astro.props;
 if (redirectTo) {
   return Astro.redirect(encodeURI(redirectTo), 301);
 }
@@ -44,6 +48,8 @@ if (!post) {
   return Astro.redirect(withBase("/blog/"), 302);
 }
 const { Content } = await render(post);
+const { previous, next } = blogNeighbors(all, post);
+const listingHref = withBase("/blog/");
 ---
 <BaseLayout title={post.data.title} description={post.data.description || post.data.title}>
   <article>
@@ -60,4 +66,16 @@ const { Content } = await render(post);
       <Content />
     </div>
   </article>
+
+  <section class="page-shell page-shell--narrow post-footer" aria-label="More from Blog">
+    <PostStep
+      previous={previous}
+      next={next}
+      hrefFor={blogPostHref}
+      label="Previous and next blog posts"
+    />
+    <p class="post-back">
+      <a href={listingHref}>More from Blog</a>
+    </p>
+  </section>
 </BaseLayout>

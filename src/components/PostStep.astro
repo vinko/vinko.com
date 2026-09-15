@@ -1,0 +1,30 @@
+---
+import type { Post } from "../lib/posts";
+
+interface Props {
+  previous?: Post;
+  next?: Post;
+  hrefFor: (post: Post) => string;
+  label: string;
+}
+
+const { previous, next, hrefFor, label } = Astro.props;
+---
+<nav class="post-step" aria-label={label}>
+  {previous ? (
+    <a class="post-step-link" href={hrefFor(previous)}>
+      <span class="post-step-dir">Previous</span>
+      <span class="post-step-title">{previous.data.title}</span>
+    </a>
+  ) : (
+    <span class="post-step-link post-step-link--empty" aria-hidden="true"></span>
+  )}
+  {next ? (
+    <a class="post-step-link post-step-link--next" href={hrefFor(next)}>
+      <span class="post-step-dir">Next</span>
+      <span class="post-step-title">{next.data.title}</span>
+    </a>
+  ) : (
+    <span class="post-step-link post-step-link--empty" aria-hidden="true"></span>
+  )}
+</nav>

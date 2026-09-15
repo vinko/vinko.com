@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getCollection } from "astro:content";
+import { HARBOUR_HERO, homeInstagramStrip, homeLanes } from "../../lib/home";
+import { blogPostHref, socialPostHref } from "../../lib/posts";
+import { withBase } from "../../lib/url";
+
+const all = await getCollection("posts");
+const lanes = homeLanes(all, 3);
+const instagram = homeInstagramStrip(all, 3);
+const heroSrc = withBase(HARBOUR_HERO.src);
+---
+<BaseLayout
+  title="Lanes desk"
+  description="Alternate home layout — travel, food, and AI lanes with recent posts from vinko.com"
+>
+  <section class="hero hero--compact" aria-label="Introduction">
+    <img
+      class="hero-photo"
+      src={heroSrc}
+      alt={HARBOUR_HERO.alt}
+      width="640"
+      height="546"
+    />
+    <div class="hero-veil" aria-hidden="true"></div>
+    <div class="hero-copy">
+      <h1>Vinko’s Thoughts On…</h1>
+      <p class="lead">
+        Notes on tech, travel, food, and photography — from a true technology versatilist.
+      </p>
+      <div class="btn-row">
+        <a class="btn" href={withBase("/blog/")}>Read the blog</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="page-shell">
+    {lanes.map((lane) => (
+      <section class="home-lane" aria-labelledby={`lane-${lane.id}`}>
+        <div class="lane-head">
+          <h2 class="section-heading" id={`lane-${lane.id}`}>{lane.heading}</h2>
+          <a class="lane-all" href={lane.seeAllHref}>{lane.seeAllLabel}</a>
+        </div>
+        <ul class="post-grid">
+          {lane.posts.map((post) => (
+            <PostCard post={post} heading="h3" href={blogPostHref(post)} />
+          ))}
+        </ul>
+      </section>
+    ))}
+
+    <section class="home-lane" aria-labelledby="lane-instagram">
+      <div class="lane-head">
+        <h2 class="section-heading" id="lane-instagram">From Instagram</h2>
+        <a class="lane-all" href={withBase("/social-network/")}>Social Network</a>
+      </div>
+      <ul class="post-grid">
+        {instagram.map((post) => (
+          <PostCard post={post} heading="h3" href={socialPostHref(post)} />
+        ))}
+      </ul>
+    </section>
+
+    <nav class="home-link-row" aria-label="About and contact">
+      <a href={withBase("/about/")}>About</a>
+      <a href={withBase("/contact/")}>Contact</a>
+    </nav>
+  </div>
+</BaseLayout>
